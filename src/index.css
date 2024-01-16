@@ -16,7 +16,7 @@ button {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background : rgba(0,0,0,0.07);
+    background : rgba(0,0,0,0.03);
     border-radius: 3px;
 }
 
@@ -35,7 +35,7 @@ form {
 form input {
     padding : 0.5em;
     border-radius: 6px;
-    border : 1px solid rgba(0,0,0,0.2)
+    border : 1px solid rgba(0,0,0,0.2);
 }
 
 form button {
@@ -69,31 +69,31 @@ span.bold {
     flex : 1;
     box-shadow: 0 0 16px rgba(0,0,0,0.1);
     border-radius: 8px;
+    overflow: auto;
 }
 
 .attendance-table table {
     margin-top : 1rem;
     width: 50%;
     text-align: center;
-    outline : 1px solid white;
 }
 
 .attendance-table table tr * {
-    padding : 0.5em;
+    padding : 0.5em 1em;
 }
 .attendance-table table tr *:not(.attendance-table table tr *:last-child) {
 
-    border-right : 1px solid #ccc;
+    border-right : 1px solid #ececec;
 }
 .attendance-table table th  {
    
-    border-bottom : 1px solid #ccc;
+    border-bottom : 1px solid #ececec;
 }
 
 .attendance-table button {
     display: flex;
     width : 50%;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
 }
 
 

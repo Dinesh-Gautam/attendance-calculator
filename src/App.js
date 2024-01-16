@@ -178,7 +178,7 @@ function GetTodayAttendance({ info, days, setDays, todayDate, originalDate }) {
                       style={
                         days?.[todaysDate]?.[subject.id]?.present
                           ? {
-                              backgroundColor: "lightgreen",
+                              backgroundColor: "rgba(0,255,0,0.1)",
                             }
                           : {}
                       }
@@ -203,7 +203,7 @@ function GetTodayAttendance({ info, days, setDays, todayDate, originalDate }) {
                       style={
                         days?.[todaysDate]?.[subject.id]?.absent
                           ? {
-                              backgroundColor: "red",
+                              backgroundColor: "rgba(255,0,0,0.1)",
                             }
                           : {}
                       }
@@ -353,6 +353,22 @@ function Calendar({ info, days, todayDate, setToDayDate, originalDate }) {
                         monthNo,
                         day
                       ).toDateString();
+                      const presentRatio =
+                        days?.[currentDate] !== undefined
+                          ? (Object.values(days?.[currentDate])
+                              ?.filter((sub) => sub?.present)
+                              .reduce((a) => a + 1, 0) *
+                              255) /
+                            6
+                          : 0;
+                      const absentRatio =
+                        days?.[currentDate] !== undefined
+                          ? (Object.values(days?.[currentDate])
+                              ?.filter((sub) => sub?.absent)
+                              .reduce((a) => a + 1, 0) *
+                              255) /
+                            6
+                          : 0;
                       return (
                         <td key={monthNo + weekNo + weekDayNo}>
                           {day && (
@@ -367,7 +383,13 @@ function Calendar({ info, days, todayDate, setToDayDate, originalDate }) {
                                   ? {
                                       backgroundColor: "white",
                                     }
-                                  : {}
+                                  : {
+                                      backgroundColor: `rgba(${absentRatio},${presentRatio},0, ${
+                                        absentRatio + presentRatio > 0
+                                          ? "0.1"
+                                          : "0.02"
+                                      })`,
+                                    }
                               }
                               disabled={isCalendarButtonDisabled(
                                 day,
