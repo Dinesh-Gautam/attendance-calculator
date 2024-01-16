@@ -376,7 +376,7 @@ function Calendar({ info, days, todayDate, setToDayDate, originalDate }) {
                               style={
                                 todayDate.toDateString() === currentDate
                                   ? {
-                                      backgroundColor: "blue",
+                                      backgroundColor: "#0D65ff",
                                       color: "white",
                                     }
                                   : currentDate === originalDate.toDateString()
