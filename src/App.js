@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import Chart from "react-google-charts";
 
@@ -172,6 +172,9 @@ function GetTodayAttendance({
 }) {
   const [sortCol, setSortCol] = useState("Subjects");
   const [sortOrder, setSortOrder] = useState(1);
+
+  const [displayChart, setDisplayChart] = useState("Attended Lectures");
+
   const todaysDate = todayDate.toDateString();
 
   const attendedLectures = info.subjects.map((subject) => ({
@@ -208,6 +211,23 @@ function GetTodayAttendance({
     Lectures: lectures,
     Percentage: attendedPercentage,
   };
+  const sortedData = useMemo(() => {
+    return [...tableValues[sortCol]]
+      .sort((a, b) =>
+        sortOrder === 1
+          ? a.values[1] < b.values[1]
+            ? -1
+            : a.values[1] > b.values[1]
+            ? 1
+            : 0
+          : a.values[1] < b.values[1]
+          ? 1
+          : a.values[1] > b.values[1]
+          ? -1
+          : 0
+      )
+      .map(({ id }) => info.subjects.find((subject) => subject.id === id));
+  }, [sortCol, sortOrder]);
 
   function headingClickHandler(value) {
     if (value === sortCol) {
@@ -218,17 +238,80 @@ function GetTodayAttendance({
     }
   }
 
-  const chartValues = [
+  const chartAttendedLectures = [
     ["Subjects", "Attended Lectures"],
     ...attendedLectures.map((sub) => sub.values),
   ];
+  const chartAttendanceRatio = [
+    ["Ratio", "Attendance"],
+    // get total present and absent and total number of lectures
+    [
+      "Total Present",
 
-  const options = {
+      info.subjects
+        .map((subject) =>
+          Object.values(days)
+            .map((day) => {
+              return day[subject.id]?.present ? 1 : 0;
+            })
+            .reduce((a, b) => a + b, 0)
+        )
+        .reduce((a, b) => a + b, 0),
+    ],
+    [
+      "Total Absent",
+
+      info.subjects
+        .map((subject) =>
+          Object.values(days)
+            .map((day) => {
+              return day[subject.id]?.absent ? 1 : 0;
+            })
+            .reduce((a, b) => a + b, 0)
+        )
+        .reduce((a, b) => a + b, 0),
+    ],
+    [
+      "Lectures not taken",
+      info.subjects
+        .map((subject) =>
+          Object.values(days)
+            .map((day) => {
+              return !day[subject.id]?.absent && !day[subject.id]?.present
+                ? 1
+                : 0;
+            })
+            .reduce((a, b) => a + b, 0)
+        )
+        .reduce((a, b) => a + b, 0),
+    ],
+  ];
+  console.log(chartAttendanceRatio);
+
+  const commonOptions = {
     legend: "none",
     pieSliceText: "label",
-    title: "Attended Lectures",
-    pieStartAngle: 100,
-    is3D: true,
+  };
+
+  const charts = {
+    "Attendance Ratio": {
+      chartType: "PieChart",
+      data: chartAttendanceRatio,
+      options: {
+        title: "Attendance Ratio",
+
+        ...commonOptions,
+      },
+    },
+    "Attended Lectures": {
+      chartType: "PieChart",
+      data: chartAttendedLectures,
+      options: {
+        title: "Attended Lectures",
+
+        ...commonOptions,
+      },
+    },
   };
 
   return (
@@ -273,89 +356,69 @@ function GetTodayAttendance({
               </tr>
             </thead>
             <tbody>
-              {[...tableValues[sortCol]]
-                .sort((a, b) =>
-                  sortOrder === 1
-                    ? a.values[1] < b.values[1]
-                      ? -1
-                      : a.values[1] > b.values[1]
-                      ? 1
-                      : 0
-                    : a.values[1] < b.values[1]
-                    ? 1
-                    : a.values[1] > b.values[1]
-                    ? -1
-                    : 0
-                )
-                .map(({ id }) =>
-                  info.subjects.find((subject) => subject.id === id)
-                )
-                .map((subject) => {
-                  return (
-                    <tr key={subject.id}>
-                      <td>{subject.name}</td>
-                      <td style={{ display: "flex", gap: "1em" }}>
-                        <button
-                          style={
-                            days?.[todaysDate]?.[subject.id]?.present
-                              ? {
-                                  backgroundColor: "rgba(0,255,0,0.1)",
-                                }
-                              : {}
-                          }
-                          onClick={(e) =>
-                            setDays((prev) => ({
-                              ...prev,
-                              [todaysDate]: {
-                                ...prev[todaysDate],
-                                [subject.id]: {
-                                  present:
-                                    !prev?.[todaysDate]?.[subject.id]?.present,
+              {sortedData.map((subject) => {
+                return (
+                  <tr key={subject.id}>
+                    <td>{subject.name}</td>
+                    <td style={{ display: "flex", gap: "1em" }}>
+                      <button
+                        style={
+                          days?.[todaysDate]?.[subject.id]?.present
+                            ? {
+                                backgroundColor: "rgba(0,255,0,0.1)",
+                              }
+                            : {}
+                        }
+                        onClick={(e) =>
+                          setDays((prev) => ({
+                            ...prev,
+                            [todaysDate]: {
+                              ...prev[todaysDate],
+                              [subject.id]: {
+                                present:
+                                  !prev?.[todaysDate]?.[subject.id]?.present,
 
-                                  absent: false,
-                                },
+                                absent: false,
                               },
-                            }))
-                          }
-                        >
-                          Present
-                        </button>
-                        <button
-                          style={
-                            days?.[todaysDate]?.[subject.id]?.absent
-                              ? {
-                                  backgroundColor: "rgba(255,0,0,0.1)",
-                                }
-                              : {}
-                          }
-                          onClick={(e) =>
-                            setDays((prev) => ({
-                              ...prev,
-                              [todaysDate]: {
-                                ...prev[todaysDate],
-                                [subject.id]: {
-                                  absent:
-                                    !prev?.[todaysDate]?.[subject.id]?.absent,
-                                  present: false,
-                                },
+                            },
+                          }))
+                        }
+                      >
+                        Present
+                      </button>
+                      <button
+                        style={
+                          days?.[todaysDate]?.[subject.id]?.absent
+                            ? {
+                                backgroundColor: "rgba(255,0,0,0.1)",
+                              }
+                            : {}
+                        }
+                        onClick={(e) =>
+                          setDays((prev) => ({
+                            ...prev,
+                            [todaysDate]: {
+                              ...prev[todaysDate],
+                              [subject.id]: {
+                                absent:
+                                  !prev?.[todaysDate]?.[subject.id]?.absent,
+                                present: false,
                               },
-                            }))
-                          }
-                        >
-                          Absent
-                        </button>
-                      </td>
-                      <td>{getAttendedLecturesNumber(subject, days)}</td>
-                      <td>{getTotalLecturesNumber(subject, days)}</td>
-                      <td>
-                        {getAttendedLecturesPercentage(subject, days).toFixed(
-                          1
-                        )}
-                        %
-                      </td>
-                    </tr>
-                  );
-                })}
+                            },
+                          }))
+                        }
+                      >
+                        Absent
+                      </button>
+                    </td>
+                    <td>{getAttendedLecturesNumber(subject, days)}</td>
+                    <td>{getTotalLecturesNumber(subject, days)}</td>
+                    <td>
+                      {getAttendedLecturesPercentage(subject, days).toFixed(1)}%
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
             <tfoot>
               <tr>
@@ -404,14 +467,33 @@ function GetTodayAttendance({
             </tfoot>
           </table>
 
-          <div style={{ display: "block" }}>
-            <Chart
-              chartType="PieChart"
-              data={chartValues}
-              options={options}
-              width={"100%"}
-              height={"400px"}
-            />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              flex: 1,
+            }}
+          >
+            <select
+              value={displayChart}
+              onChange={(e) => setDisplayChart(e.target.value)}
+            >
+              {Object.keys(charts).map((val, index) => (
+                <option key={index} value={val}>
+                  {val}
+                </option>
+              ))}
+            </select>
+            <div>
+              <Chart
+                chartType="PieChart"
+                data={charts[displayChart].data}
+                options={charts[displayChart].options}
+                width={"100%"}
+                height={"400px"}
+              />
+            </div>
           </div>
         </div>
       </div>

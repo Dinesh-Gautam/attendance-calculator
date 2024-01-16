@@ -32,11 +32,13 @@ form {
     border-radius: 6px;
 }
 
-form input {
+input , select {
     padding : 0.5em;
     border-radius: 6px;
     border : 1px solid rgba(0,0,0,0.2);
+    outline : none;
 }
+
 
 form button {
     margin-top : 1em;
