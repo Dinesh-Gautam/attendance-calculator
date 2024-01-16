@@ -170,7 +170,7 @@ function GetTodayAttendance({
   originalDate,
   setEdit,
 }) {
-  const [sortCol, setSortCol] = useState("Subjects");
+  const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(1);
 
   const [displayChart, setDisplayChart] = useState("Attended Lectures");
@@ -212,6 +212,7 @@ function GetTodayAttendance({
     Percentage: attendedPercentage,
   };
   const sortedData = useMemo(() => {
+    if (!sortCol) return info.subjects;
     return [...tableValues[sortCol]]
       .sort((a, b) =>
         sortOrder === 1
@@ -227,7 +228,8 @@ function GetTodayAttendance({
           : 0
       )
       .map(({ id }) => info.subjects.find((subject) => subject.id === id));
-  }, [sortCol, sortOrder]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortCol, sortOrder, todaysDate, info.subjects]);
 
   function headingClickHandler(value) {
     if (value === sortCol) {
@@ -340,6 +342,7 @@ function GetTodayAttendance({
                 {Object.keys(tableValues).map((heading, index) => {
                   return (
                     <th
+                      style={{ cursor: "pointer" }}
                       key={index}
                       onClick={() => headingClickHandler(heading)}
                     >
