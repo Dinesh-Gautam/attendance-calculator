@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import Chart from "react-google-charts";
 
 function App() {
   const [info, setInfo] = useState(null);
   const [days, setDays] = useState(null);
+  const [edit, setEdit] = useState(false);
   const originalDate = new Date();
 
   const [todayDate, setToDayDate] = useState(originalDate);
@@ -31,13 +33,18 @@ function App() {
   return (
     info !== null && (
       <div className="App">
-        {!info?.className && <GetClassInfo info={info} setInfo={setInfo} />}
-        {(!info?.startDate || !info?.endDate) && (
+        {(edit || !info?.className) && (
+          <GetClassInfo info={info} setInfo={setInfo} />
+        )}
+        {(edit || !info?.startDate || !info?.endDate) && (
           <GetStartAndEndDate info={info} setInfo={setInfo} />
         )}
-        {!info?.subjects && <GetSubjectNames info={info} setInfo={setInfo} />}
+        {(edit || !info?.subjects) && (
+          <GetSubjectNames info={info} setInfo={setInfo} />
+        )}
+        {edit && <button onClick={() => setEdit(false)}>Save Edit</button>}
 
-        {isAllDataInserted(info) && (
+        {!edit && isAllDataInserted(info) && (
           <>
             <GetTodayAttendance
               info={info}
@@ -47,6 +54,7 @@ function App() {
               todayDate={todayDate}
               setToDayDate={setToDayDate}
               originalDate={originalDate}
+              setEdit={setEdit}
             />
             <Calendar
               info={info}
@@ -70,7 +78,12 @@ function isAllDataInserted(info) {
 function GetClassInfo({ info, setInfo }) {
   const [value, setValue] = useState(info?.className || "");
   return (
-    <form onSubmit={(e) => setInfo({ ...info, className: value })}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        setInfo({ ...info, className: value });
+      }}
+    >
       <label for="classNameInput">Class Name</label>
       <input
         id="classNameInput"
@@ -89,7 +102,12 @@ function GetStartAndEndDate({ info, setInfo }) {
     endDate: info?.endDate || "",
   });
   return (
-    <form onSubmit={(e) => setInfo({ ...info, ...value })}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        setInfo({ ...info, ...value });
+      }}
+    >
       <label for="startDateInput">Start Date</label>
       <input
         id="startDateInput"
@@ -122,14 +140,15 @@ function GetSubjectNames({ info, setInfo }) {
   );
   return (
     <form
-      onSubmit={(e) =>
+      onSubmit={(e) => {
+        e.preventDefault();
         setInfo({
           ...info,
           subjects: value
             .split(",")
             .map((s, index) => ({ name: s.trim(), id: index + 1 })),
-        })
-      }
+        });
+      }}
     >
       <label for="subjectsInput">Class Name</label>
       <input
@@ -143,13 +162,86 @@ function GetSubjectNames({ info, setInfo }) {
   );
 }
 
-function GetTodayAttendance({ info, days, setDays, todayDate, originalDate }) {
+function GetTodayAttendance({
+  info,
+  days,
+  setDays,
+  todayDate,
+  originalDate,
+  setEdit,
+}) {
+  const [sortCol, setSortCol] = useState("Subjects");
+  const [sortOrder, setSortOrder] = useState(1);
   const todaysDate = todayDate.toDateString();
+
+  const attendedLectures = info.subjects.map((subject) => ({
+    id: subject.id,
+    values: [subject.name, getAttendedLecturesNumber(subject, days)],
+  }));
+  const subjectsNames = info.subjects.map((subject) => ({
+    id: subject.id,
+    values: [0, subject.name],
+  }));
+  const lectures = info.subjects.map((subject) => ({
+    id: subject.id,
+    values: [subject.name, getTotalLecturesNumber(subject, days)],
+  }));
+  const attendedPercentage = info.subjects.map((subject) => ({
+    id: subject.id,
+    values: [subject.name, getAttendedLecturesPercentage(subject, days)],
+  }));
+  const todayAttendance = info.subjects.map((subject) => ({
+    id: subject.id,
+    values: [
+      subject.name,
+      days[todaysDate]?.[subject.id]?.present
+        ? 2
+        : days[todaysDate]?.[subject.id]?.absent
+        ? 1
+        : 0,
+    ],
+  }));
+  const tableValues = {
+    Subjects: subjectsNames,
+    "Today Attendance": todayAttendance,
+    Attended: attendedLectures,
+    Lectures: lectures,
+    Percentage: attendedPercentage,
+  };
+
+  function headingClickHandler(value) {
+    if (value === sortCol) {
+      setSortOrder(-sortOrder);
+    } else {
+      setSortCol(value);
+      setSortOrder(1);
+    }
+  }
+
+  const chartValues = [
+    ["Subjects", "Attended Lectures"],
+    ...attendedLectures.map((sub) => sub.values),
+  ];
+
+  const options = {
+    legend: "none",
+    pieSliceText: "label",
+    title: "Attended Lectures",
+    pieStartAngle: 100,
+    is3D: true,
+  };
+
   return (
     <div className="attendance-table-container">
       <div>
         <span>Today's Date :</span>
         <span className="bold">{originalDate.toDateString()}</span>
+        <button
+          onClick={(e) => setEdit(true)}
+          style={{ marginLeft: "1em", display: "inline-block" }}
+        >
+          Edit
+        </button>
       </div>
       <div className="attendance-table">
         <div className="attendance-table-header">
@@ -158,126 +250,170 @@ function GetTodayAttendance({ info, days, setDays, todayDate, originalDate }) {
           {/* <p>select subjects in which you were present</p> */}
         </div>
 
-        <table cellSpacing="0">
-          <thead>
-            <tr>
-              <th>Subjects</th>
-              <th>Toady Attendance</th>
-              <th>Attended</th>
-              <th>Lectures</th>
-              <th>Percentage</th>
-            </tr>
-          </thead>
-          <tbody>
-            {info.subjects.map((subject) => {
-              return (
-                <tr key={subject.id}>
-                  <td>{subject.name}</td>
-                  <td style={{ display: "flex", gap: "1em" }}>
-                    <button
-                      style={
-                        days?.[todaysDate]?.[subject.id]?.present
-                          ? {
-                              backgroundColor: "rgba(0,255,0,0.1)",
-                            }
-                          : {}
-                      }
-                      onClick={(e) =>
-                        setDays((prev) => ({
-                          ...prev,
-                          [todaysDate]: {
-                            ...prev[todaysDate],
-                            [subject.id]: {
-                              present:
-                                !prev?.[todaysDate]?.[subject.id]?.present,
+        <div style={{ display: "flex" }}>
+          <table cellSpacing="0">
+            <thead>
+              <tr>
+                {Object.keys(tableValues).map((heading, index) => {
+                  return (
+                    <th
+                      key={index}
+                      onClick={() => headingClickHandler(heading)}
+                    >
+                      {heading}
 
+                      {sortCol === heading && (
+                        <span className="sort-icon">
+                          {sortOrder === 1 ? "▼" : "▲"}
+                        </span>
+                      )}
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {[...tableValues[sortCol]]
+                .sort((a, b) =>
+                  sortOrder === 1
+                    ? a.values[1] < b.values[1]
+                      ? -1
+                      : a.values[1] > b.values[1]
+                      ? 1
+                      : 0
+                    : a.values[1] < b.values[1]
+                    ? 1
+                    : a.values[1] > b.values[1]
+                    ? -1
+                    : 0
+                )
+                .map(({ id }) =>
+                  info.subjects.find((subject) => subject.id === id)
+                )
+                .map((subject) => {
+                  return (
+                    <tr key={subject.id}>
+                      <td>{subject.name}</td>
+                      <td style={{ display: "flex", gap: "1em" }}>
+                        <button
+                          style={
+                            days?.[todaysDate]?.[subject.id]?.present
+                              ? {
+                                  backgroundColor: "rgba(0,255,0,0.1)",
+                                }
+                              : {}
+                          }
+                          onClick={(e) =>
+                            setDays((prev) => ({
+                              ...prev,
+                              [todaysDate]: {
+                                ...prev[todaysDate],
+                                [subject.id]: {
+                                  present:
+                                    !prev?.[todaysDate]?.[subject.id]?.present,
+
+                                  absent: false,
+                                },
+                              },
+                            }))
+                          }
+                        >
+                          Present
+                        </button>
+                        <button
+                          style={
+                            days?.[todaysDate]?.[subject.id]?.absent
+                              ? {
+                                  backgroundColor: "rgba(255,0,0,0.1)",
+                                }
+                              : {}
+                          }
+                          onClick={(e) =>
+                            setDays((prev) => ({
+                              ...prev,
+                              [todaysDate]: {
+                                ...prev[todaysDate],
+                                [subject.id]: {
+                                  absent:
+                                    !prev?.[todaysDate]?.[subject.id]?.absent,
+                                  present: false,
+                                },
+                              },
+                            }))
+                          }
+                        >
+                          Absent
+                        </button>
+                      </td>
+                      <td>{getAttendedLecturesNumber(subject, days)}</td>
+                      <td>{getTotalLecturesNumber(subject, days)}</td>
+                      <td>
+                        {getAttendedLecturesPercentage(subject, days).toFixed(
+                          1
+                        )}
+                        %
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td />
+                <td style={{ display: "flex", gap: "1em" }}>
+                  <button
+                    onClick={(e) =>
+                      setDays((prev) => ({
+                        ...prev,
+                        [todaysDate]: {
+                          ...prev[todaysDate],
+                          ...info.subjects.reduce((acc, subject) => {
+                            acc[subject.id] = {
+                              present: true,
                               absent: false,
-                            },
-                          },
-                        }))
-                      }
-                    >
-                      Present
-                    </button>
-                    <button
-                      style={
-                        days?.[todaysDate]?.[subject.id]?.absent
-                          ? {
-                              backgroundColor: "rgba(255,0,0,0.1)",
-                            }
-                          : {}
-                      }
-                      onClick={(e) =>
-                        setDays((prev) => ({
-                          ...prev,
-                          [todaysDate]: {
-                            ...prev[todaysDate],
-                            [subject.id]: {
-                              absent: !prev?.[todaysDate]?.[subject.id]?.absent,
+                            };
+                            return acc;
+                          }, {}),
+                        },
+                      }))
+                    }
+                  >
+                    All present
+                  </button>
+                  <button
+                    onClick={(e) =>
+                      setDays((prev) => ({
+                        ...prev,
+                        [todaysDate]: {
+                          ...prev[todaysDate],
+                          ...info.subjects.reduce((acc, subject) => {
+                            acc[subject.id] = {
                               present: false,
-                            },
-                          },
-                        }))
-                      }
-                    >
-                      Absent
-                    </button>
-                  </td>
-                  <td>{getAttendedLecturesNumber(subject, days)}</td>
-                  <td>{getTotalLecturesNumber(subject, days)}</td>
-                  <td>
-                    {getAttendedLecturesPercentage(subject, days).toFixed(1)}%
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td />
-              <td style={{ display: "flex", gap: "1em" }}>
-                <button
-                  onClick={(e) =>
-                    setDays((prev) => ({
-                      ...prev,
-                      [todaysDate]: {
-                        ...prev[todaysDate],
-                        ...info.subjects.reduce((acc, subject) => {
-                          acc[subject.id] = {
-                            present: true,
-                            absent: false,
-                          };
-                          return acc;
-                        }, {}),
-                      },
-                    }))
-                  }
-                >
-                  All present
-                </button>
-                <button
-                  onClick={(e) =>
-                    setDays((prev) => ({
-                      ...prev,
-                      [todaysDate]: {
-                        ...prev[todaysDate],
-                        ...info.subjects.reduce((acc, subject) => {
-                          acc[subject.id] = {
-                            present: false,
-                            absent: true,
-                          };
-                          return acc;
-                        }, {}),
-                      },
-                    }))
-                  }
-                >
-                  All Absent
-                </button>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+                              absent: true,
+                            };
+                            return acc;
+                          }, {}),
+                        },
+                      }))
+                    }
+                  >
+                    All Absent
+                  </button>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style={{ display: "block" }}>
+            <Chart
+              chartType="PieChart"
+              data={chartValues}
+              options={options}
+              width={"100%"}
+              height={"400px"}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
