@@ -1,13 +1,112 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding : 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+    padding : 1em;
+    font-family: "Arial", sans-serif;
+}
+
+button {
+    border : none;
+    padding : .5em 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background : rgba(0,0,0,0.07);
+    border-radius: 3px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: fit-content;
+    gap : 4px;
+    box-shadow: 0 0 16px rgba(0,0,0,0.1);
+    padding : 1em;
+    margin : 1em;
+    border-radius: 6px;
+}
+
+form input {
+    padding : 0.5em;
+    border-radius: 6px;
+    border : 1px solid rgba(0,0,0,0.2)
+}
+
+form button {
+    margin-top : 1em;
+}
+
+
+span.bold {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+
+
+.attendance-table-container {
+    display: flex;
+    flex-direction: column;
+    margin : 1em;
+}
+
+
+.attendance-table-header p {
+    padding-block : 0.5rem;
+    font-size: 1em;
+    opacity: 0.5;
+}
+
+.attendance-table {
+    margin-top: 1em;
+    padding : 1em;
+    flex : 1;
+    box-shadow: 0 0 16px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.attendance-table table {
+    margin-top : 1rem;
+    width: 50%;
+    text-align: center;
+    outline : 1px solid white;
+}
+
+.attendance-table table tr * {
+    padding : 0.5em;
+}
+.attendance-table table tr *:not(.attendance-table table tr *:last-child) {
+
+    border-right : 1px solid #ccc;
+}
+.attendance-table table th  {
+   
+    border-bottom : 1px solid #ccc;
+}
+
+.attendance-table button {
+    display: flex;
+    width : 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+
+.calender {
+    border-collapse: collapse;
+}
+
+table th {
+    font-size : 0.8em;  
+}
+
+table.calendar button {
+    display: flex;
+    width:  100%;
+    height:  100%;
 }
