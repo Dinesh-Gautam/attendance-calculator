@@ -4,7 +4,7 @@ import Chart from "react-google-charts";
 
 const subjects = [
   {
-    id: 0,
+    id: 2,
     name: "OS",
     lectures: {
       1: [
@@ -32,7 +32,7 @@ const subjects = [
     },
   },
   {
-    id: 2,
+    id: 6,
     name: "SE",
     lectures: {
       1: [
@@ -46,7 +46,7 @@ const subjects = [
     },
   },
   {
-    id: 3,
+    id: 5,
     name: "DBMS",
     lectures: {
       1: [
@@ -74,7 +74,7 @@ const subjects = [
     },
   },
   {
-    id: 5,
+    id: 3,
     name: "DA",
     lectures: {
       3: [{ startTime: 9, endTime: 10 }],
@@ -82,7 +82,7 @@ const subjects = [
     },
   },
   {
-    id: 6,
+    id: 9,
     name: "DBMS Lab",
     lectures: {
       2: [{ startTime: 11, endTime: 13 }],
@@ -90,7 +90,7 @@ const subjects = [
     },
   },
   {
-    id: 6,
+    id: 7,
     name: "OS Lab",
     lectures: {
       3: [{ startTime: 11, endTime: 13 }],
@@ -98,7 +98,7 @@ const subjects = [
     },
   },
   {
-    id: 7,
+    id: 8,
     name: "AAD Lab",
     lectures: {
       2: [{ startTime: 15, endTime: 17 }],
@@ -107,7 +107,9 @@ const subjects = [
   },
 ];
 
-function TimeTable() {
+function TimeTable({ days }) {
+  const absentRatio = 0;
+
   return (
     <div>
       <table className="timetable" style={{ borderCollapse: "collapse" }}>
@@ -152,10 +154,26 @@ function TimeTable() {
                       time + getMinStartTimeOfSubjects(subjects),
                       weekNo
                     );
+
                     if (!subject && prevSubject) return null;
                     if (!subject) return <td />;
+                    console.log(subject);
+                    const presentRatio = getSubjectPresentRatio(
+                      subject.id,
+                      days,
+                      "present"
+                    );
                     return (
-                      <td rowSpan={subject.endTime - subject.startTime}>
+                      <td
+                        style={{
+                          backgroundColor: `rgba(${
+                            presentRatio <= 75 ? 75 - presentRatio + 75 : 0
+                          }%,${presentRatio > 75 ? presentRatio : 0}%,0%, ${
+                            isNaN(presentRatio) ? "0" : "0.15"
+                          })`,
+                        }}
+                        rowSpan={subject.endTime - subject.startTime}
+                      >
                         {subject.subjectName}
                       </td>
                     );
@@ -170,6 +188,23 @@ function TimeTable() {
   );
 }
 
+function getSubjectPresentRatio(subjectId, days, att) {
+  days = Object.values(days)
+    .map((day) => Object.entries(day))
+    .flat();
+  console.log(days);
+  const totalPresent = days
+    ?.filter(([subId, att]) => att?.present && +subId === subjectId)
+    .reduce((a) => a + 1, 0);
+  const totalAbsent = days
+    ?.filter(([subId, att]) => att?.absent && +subId === subjectId)
+    .reduce((a) => a + 1, 0);
+  const total = totalPresent + totalAbsent;
+
+  const colorValue = (totalPresent / total) * 100;
+  console.log(colorValue);
+  return colorValue;
+}
 function formatTimeTo12HourFormat(twentyFourHourTime) {
   const hour = twentyFourHourTime % 12 || 12;
   const suffix = twentyFourHourTime < 12 ? "AM" : "PM";
@@ -203,7 +238,7 @@ function getSubjectAtTime(subjects, time, weekNo) {
         for (let lecture of subject.lectures[week]) {
           if (time === lecture.startTime) {
             console.log(lecture);
-            return { ...lecture, subjectName: subject.name };
+            return { ...lecture, subjectName: subject.name, id: subject.id };
           }
         }
       }
@@ -619,7 +654,7 @@ function GetTodayAttendance({
       </div>
       {showTimeTable ? (
         <div className="attendance-table">
-          <TimeTable />
+          <TimeTable days={days} />
         </div>
       ) : (
         <div className="attendance-table">
