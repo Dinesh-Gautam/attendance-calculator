@@ -74,17 +74,16 @@ span.bold {
     overflow: auto;
 }
 
-.attendance-table table {
+.attendance-table table  {
     margin-top : 1rem;
     width: 50%;
     text-align: center;
 }
 
-.attendance-table table tr * {
+.attendance-table table tr *  ,  .timetable tr *{
     padding : 0.5em 1em;
 }
 .attendance-table table tr *:not(.attendance-table table tr *:last-child) {
-
     border-right : 1px solid #ececec;
 }
 .attendance-table table th  {
@@ -111,4 +110,33 @@ table.calendar button {
     display: flex;
     width:  100%;
     height:  100%;
+}
+
+.timetable tr * {
+    padding : 1em;
+    height: 3em;
+}
+
+.timetable th , .timetable tbody tr td:first-child {
+    background : rgba(0,0,0,0.05);
+    vertical-align: middle !important;
+}
+
+.timetable th , .timetable tbody td {
+    border-bottom : 1px solid rgba(0,0,0,0.2);
+    border-right : 1px solid rgba(0,0,0,0.2);
+} 
+
+.timetable th , .timetable td {
+    vertical-align: baseline;
+    text-align: start;
+    padding-right : 4em;
+}
+.timetable th span {
+    padding-inline: 2px;
+}
+.timetable th span.timeSuffix {
+    opacity: 0.5;
+    font-size: 0.7em;
+    padding : 0;
 }

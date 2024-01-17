@@ -2,6 +2,268 @@ import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import Chart from "react-google-charts";
 
+const subjects = [
+  {
+    id: 0,
+    name: "OS",
+    lectures: {
+      1: [
+        {
+          startTime: 9,
+          endTime: 10,
+        },
+      ],
+      2: [{ startTime: 9, endTime: 10 }],
+      5: [{ startTime: 10, endTime: 11 }],
+    },
+  },
+  {
+    id: 1,
+    name: "BI",
+    lectures: {
+      1: [
+        {
+          startTime: 10,
+          endTime: 11,
+        },
+      ],
+      2: [{ startTime: 14, endTime: 15 }],
+      5: [{ startTime: 9, endTime: 10 }],
+    },
+  },
+  {
+    id: 2,
+    name: "SE",
+    lectures: {
+      1: [
+        {
+          startTime: 11,
+          endTime: 12,
+        },
+      ],
+      3: [{ startTime: 10, endTime: 11 }],
+      5: [{ startTime: 14, endTime: 15 }],
+    },
+  },
+  {
+    id: 3,
+    name: "DBMS",
+    lectures: {
+      1: [
+        {
+          startTime: 12,
+          endTime: 13,
+        },
+      ],
+      2: [{ startTime: 10, endTime: 11 }],
+      5: [{ startTime: 12, endTime: 13 }],
+    },
+  },
+  {
+    id: 4,
+    name: "AAD",
+    lectures: {
+      1: [
+        {
+          startTime: 14,
+          endTime: 15,
+        },
+      ],
+      3: [{ startTime: 14, endTime: 15 }],
+      4: [{ startTime: 14, endTime: 15 }],
+    },
+  },
+  {
+    id: 5,
+    name: "DA",
+    lectures: {
+      3: [{ startTime: 9, endTime: 10 }],
+      5: [{ startTime: 11, endTime: 12 }],
+    },
+  },
+  {
+    id: 6,
+    name: "DBMS Lab",
+    lectures: {
+      2: [{ startTime: 11, endTime: 13 }],
+      4: [{ startTime: 15, endTime: 17 }],
+    },
+  },
+  {
+    id: 6,
+    name: "OS Lab",
+    lectures: {
+      3: [{ startTime: 11, endTime: 13 }],
+      4: [{ startTime: 9, endTime: 11 }],
+    },
+  },
+  {
+    id: 7,
+    name: "AAD Lab",
+    lectures: {
+      2: [{ startTime: 15, endTime: 17 }],
+      4: [{ startTime: 11, endTime: 13 }],
+    },
+  },
+];
+
+function TimeTable() {
+  return (
+    <div>
+      <table className="timetable" style={{ borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <td />
+            {Array.from({ length: getNoOfWeeks(subjects) }).map((_, weekNo) => {
+              return <th>{getWeekName(weekNo + 1)}</th>;
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({
+            length:
+              getMaxEndTimeOfSubjects(subjects) -
+              getMinStartTimeOfSubjects(subjects),
+          }).map((_, time) => {
+            return (
+              <tr>
+                <th>
+                  <span>
+                    {formatTimeTo12HourFormat(
+                      time + getMinStartTimeOfSubjects(subjects)
+                    )}
+                  </span>
+                  -
+                  <span>
+                    {formatTimeTo12HourFormat(
+                      time + 1 + getMinStartTimeOfSubjects(subjects)
+                    )}
+                  </span>
+                </th>
+                {Array.from({ length: getNoOfWeeks(subjects) }).map(
+                  (_, weekNo) => {
+                    const subject = getSubjectAtTime(
+                      subjects,
+                      time + getMinStartTimeOfSubjects(subjects),
+                      weekNo
+                    );
+                    const prevSubject = findSubjectWhosEndTimeIsBeforeTime(
+                      subjects,
+                      time + getMinStartTimeOfSubjects(subjects),
+                      weekNo
+                    );
+                    if (!subject && prevSubject) return null;
+                    if (!subject) return <td />;
+                    return (
+                      <td rowSpan={subject.endTime - subject.startTime}>
+                        {subject.subjectName}
+                      </td>
+                    );
+                  }
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function formatTimeTo12HourFormat(twentyFourHourTime) {
+  const hour = twentyFourHourTime % 12 || 12;
+  const suffix = twentyFourHourTime < 12 ? "AM" : "PM";
+  return (
+    <>
+      <span>{hour}</span>
+      <span className="timeSuffix">{suffix}</span>
+    </>
+  );
+}
+
+function findSubjectWhosEndTimeIsBeforeTime(subjects, time, weekNo) {
+  for (let subject of subjects) {
+    for (let week of Object.keys(subject.lectures)) {
+      if (weekNo + 1 === +week) {
+        for (let lecture of subject.lectures[week]) {
+          if (time < lecture.endTime && time >= lecture.startTime) {
+            return { ...lecture, subjectName: subject.name };
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function getSubjectAtTime(subjects, time, weekNo) {
+  for (let subject of subjects) {
+    for (let week of Object.keys(subject.lectures)) {
+      if (weekNo + 1 === +week) {
+        for (let lecture of subject.lectures[week]) {
+          if (time === lecture.startTime) {
+            console.log(lecture);
+            return { ...lecture, subjectName: subject.name };
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function getWeekName(weekNo) {
+  const weekNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  return weekNames[weekNo];
+}
+
+function getNoOfWeeks(subjects) {
+  let max = 0;
+  for (let subject of subjects) {
+    for (let week of Object.keys(subject.lectures)) {
+      if (week > max) {
+        max = week;
+      }
+    }
+  }
+  return max;
+}
+
+function getMaxEndTimeOfSubjects(subjects) {
+  let max = 0;
+  for (let subject of subjects) {
+    for (let week of Object.keys(subject.lectures)) {
+      for (let lecture of subject.lectures[week]) {
+        if (lecture.endTime > max) {
+          max = lecture.endTime;
+        }
+      }
+    }
+  }
+  return max;
+}
+function getMinStartTimeOfSubjects(subjects) {
+  let min = 100;
+  for (let subject of subjects) {
+    for (let week of Object.keys(subject.lectures)) {
+      for (let lecture of subject.lectures[week]) {
+        if (lecture.startTime < min) {
+          min = lecture.startTime;
+        }
+      }
+    }
+  }
+  return min;
+}
+
 function App() {
   const [info, setInfo] = useState(null);
   const [days, setDays] = useState(null);
@@ -170,6 +432,7 @@ function GetTodayAttendance({
   originalDate,
   setEdit,
 }) {
+  const [showTimeTable, setShowTimeTable] = useState(false);
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(1);
 
@@ -318,188 +581,223 @@ function GetTodayAttendance({
 
   return (
     <div className="attendance-table-container">
-      <div>
-        <span>Today's Date :</span>
-        <span className="bold">{originalDate.toDateString()}</span>
-        <button
-          onClick={(e) => setEdit(true)}
-          style={{ marginLeft: "1em", display: "inline-block" }}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          paddingInline: "2em",
+          alignItems: "center",
+          marginTop: "-1em",
+        }}
+      >
+        <div />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
         >
-          Edit
-        </button>
-      </div>
-      <div className="attendance-table">
-        <div className="attendance-table-header">
-          <span>Showing attendance: </span>
-          <span className="bold">{todaysDate}</span>
-          {/* <p>select subjects in which you were present</p> */}
+          <span style={{ fontSize: "0.8em" }}>Today's Date </span>
+          <span className="bold">{originalDate.toDateString()}</span>
         </div>
+        <div>
+          <button
+            onClick={(e) => setEdit(true)}
+            style={{ marginLeft: "1em", display: "inline-block" }}
+          >
+            Edit
+          </button>
+          <button
+            onClick={(e) => setShowTimeTable((prev) => !prev)}
+            style={{ marginLeft: "1em", display: "inline-block" }}
+          >
+            {showTimeTable ? "Hide" : "Show"}
+            TimeTable
+          </button>
+        </div>
+      </div>
+      {showTimeTable ? (
+        <div className="attendance-table">
+          <TimeTable />
+        </div>
+      ) : (
+        <div className="attendance-table">
+          <div className="attendance-table-header">
+            <span>Showing attendance: </span>
+            <span className="bold">{todaysDate}</span>
+            {/* <p>select subjects in which you were present</p> */}
+          </div>
 
-        <div style={{ display: "flex" }}>
-          <table cellSpacing="0">
-            <thead>
-              <tr>
-                {Object.keys(tableValues).map((heading, index) => {
+          <div style={{ display: "flex" }}>
+            <table cellSpacing="0">
+              <thead>
+                <tr>
+                  {Object.keys(tableValues).map((heading, index) => {
+                    return (
+                      <th
+                        style={{ cursor: "pointer" }}
+                        key={index}
+                        onClick={() => headingClickHandler(heading)}
+                      >
+                        {heading}
+
+                        {sortCol === heading && (
+                          <span className="sort-icon">
+                            {sortOrder === 1 ? "▼" : "▲"}
+                          </span>
+                        )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {sortedData.map((subject) => {
                   return (
-                    <th
-                      style={{ cursor: "pointer" }}
-                      key={index}
-                      onClick={() => headingClickHandler(heading)}
-                    >
-                      {heading}
+                    <tr key={subject.id}>
+                      <td>{subject.name}</td>
+                      <td style={{ display: "flex", gap: "1em" }}>
+                        <button
+                          style={
+                            days?.[todaysDate]?.[subject.id]?.present
+                              ? {
+                                  backgroundColor: "rgba(0,255,0,0.1)",
+                                }
+                              : {}
+                          }
+                          onClick={(e) =>
+                            setDays((prev) => ({
+                              ...prev,
+                              [todaysDate]: {
+                                ...prev[todaysDate],
+                                [subject.id]: {
+                                  present:
+                                    !prev?.[todaysDate]?.[subject.id]?.present,
 
-                      {sortCol === heading && (
-                        <span className="sort-icon">
-                          {sortOrder === 1 ? "▼" : "▲"}
-                        </span>
-                      )}
-                    </th>
+                                  absent: false,
+                                },
+                              },
+                            }))
+                          }
+                        >
+                          Present
+                        </button>
+                        <button
+                          style={
+                            days?.[todaysDate]?.[subject.id]?.absent
+                              ? {
+                                  backgroundColor: "rgba(255,0,0,0.1)",
+                                }
+                              : {}
+                          }
+                          onClick={(e) =>
+                            setDays((prev) => ({
+                              ...prev,
+                              [todaysDate]: {
+                                ...prev[todaysDate],
+                                [subject.id]: {
+                                  absent:
+                                    !prev?.[todaysDate]?.[subject.id]?.absent,
+                                  present: false,
+                                },
+                              },
+                            }))
+                          }
+                        >
+                          Absent
+                        </button>
+                      </td>
+                      <td>{getAttendedLecturesNumber(subject, days)}</td>
+                      <td>{getTotalLecturesNumber(subject, days)}</td>
+                      <td>
+                        {getAttendedLecturesPercentage(subject, days).toFixed(
+                          1
+                        )}
+                        %
+                      </td>
+                    </tr>
                   );
                 })}
-              </tr>
-            </thead>
-            <tbody>
-              {sortedData.map((subject) => {
-                return (
-                  <tr key={subject.id}>
-                    <td>{subject.name}</td>
-                    <td style={{ display: "flex", gap: "1em" }}>
-                      <button
-                        style={
-                          days?.[todaysDate]?.[subject.id]?.present
-                            ? {
-                                backgroundColor: "rgba(0,255,0,0.1)",
-                              }
-                            : {}
-                        }
-                        onClick={(e) =>
-                          setDays((prev) => ({
-                            ...prev,
-                            [todaysDate]: {
-                              ...prev[todaysDate],
-                              [subject.id]: {
-                                present:
-                                  !prev?.[todaysDate]?.[subject.id]?.present,
-
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td />
+                  <td style={{ display: "flex", gap: "1em" }}>
+                    <button
+                      onClick={(e) =>
+                        setDays((prev) => ({
+                          ...prev,
+                          [todaysDate]: {
+                            ...prev[todaysDate],
+                            ...info.subjects.reduce((acc, subject) => {
+                              acc[subject.id] = {
+                                present: true,
                                 absent: false,
-                              },
-                            },
-                          }))
-                        }
-                      >
-                        Present
-                      </button>
-                      <button
-                        style={
-                          days?.[todaysDate]?.[subject.id]?.absent
-                            ? {
-                                backgroundColor: "rgba(255,0,0,0.1)",
-                              }
-                            : {}
-                        }
-                        onClick={(e) =>
-                          setDays((prev) => ({
-                            ...prev,
-                            [todaysDate]: {
-                              ...prev[todaysDate],
-                              [subject.id]: {
-                                absent:
-                                  !prev?.[todaysDate]?.[subject.id]?.absent,
+                              };
+                              return acc;
+                            }, {}),
+                          },
+                        }))
+                      }
+                    >
+                      All present
+                    </button>
+                    <button
+                      onClick={(e) =>
+                        setDays((prev) => ({
+                          ...prev,
+                          [todaysDate]: {
+                            ...prev[todaysDate],
+                            ...info.subjects.reduce((acc, subject) => {
+                              acc[subject.id] = {
                                 present: false,
-                              },
-                            },
-                          }))
-                        }
-                      >
-                        Absent
-                      </button>
-                    </td>
-                    <td>{getAttendedLecturesNumber(subject, days)}</td>
-                    <td>{getTotalLecturesNumber(subject, days)}</td>
-                    <td>
-                      {getAttendedLecturesPercentage(subject, days).toFixed(1)}%
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td />
-                <td style={{ display: "flex", gap: "1em" }}>
-                  <button
-                    onClick={(e) =>
-                      setDays((prev) => ({
-                        ...prev,
-                        [todaysDate]: {
-                          ...prev[todaysDate],
-                          ...info.subjects.reduce((acc, subject) => {
-                            acc[subject.id] = {
-                              present: true,
-                              absent: false,
-                            };
-                            return acc;
-                          }, {}),
-                        },
-                      }))
-                    }
-                  >
-                    All present
-                  </button>
-                  <button
-                    onClick={(e) =>
-                      setDays((prev) => ({
-                        ...prev,
-                        [todaysDate]: {
-                          ...prev[todaysDate],
-                          ...info.subjects.reduce((acc, subject) => {
-                            acc[subject.id] = {
-                              present: false,
-                              absent: true,
-                            };
-                            return acc;
-                          }, {}),
-                        },
-                      }))
-                    }
-                  >
-                    All Absent
-                  </button>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+                                absent: true,
+                              };
+                              return acc;
+                            }, {}),
+                          },
+                        }))
+                      }
+                    >
+                      All Absent
+                    </button>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              flex: 1,
-            }}
-          >
-            <select
-              value={displayChart}
-              onChange={(e) => setDisplayChart(e.target.value)}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                flex: 1,
+              }}
             >
-              {Object.keys(charts).map((val, index) => (
-                <option key={index} value={val}>
-                  {val}
-                </option>
-              ))}
-            </select>
-            <div>
-              <Chart
-                chartType="PieChart"
-                data={charts[displayChart].data}
-                options={charts[displayChart].options}
-                width={"100%"}
-                height={"400px"}
-              />
+              <select
+                value={displayChart}
+                onChange={(e) => setDisplayChart(e.target.value)}
+              >
+                {Object.keys(charts).map((val, index) => (
+                  <option key={index} value={val}>
+                    {val}
+                  </option>
+                ))}
+              </select>
+              <div>
+                <Chart
+                  chartType="PieChart"
+                  data={charts[displayChart].data}
+                  options={charts[displayChart].options}
+                  width={"100%"}
+                  height={"400px"}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
