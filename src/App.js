@@ -160,8 +160,7 @@ function TimeTable({ days }) {
                     console.log(subject);
                     const presentRatio = getSubjectPresentRatio(
                       subject.id,
-                      days,
-                      "present"
+                      days
                     );
                     return (
                       <td
@@ -175,6 +174,13 @@ function TimeTable({ days }) {
                         rowSpan={subject.endTime - subject.startTime}
                       >
                         {subject.subjectName}
+                        {!isNaN(presentRatio) && (
+                          <span
+                            style={{ fontSize: "0.8em", marginLeft: "auto" }}
+                          >
+                            {presentRatio.toFixed(0)}%
+                          </span>
+                        )}
                       </td>
                     );
                   }
