@@ -462,8 +462,8 @@ function GetSubjectNames({ info, setInfo }) {
           ...info,
           subjects: value.split(",").map((s, index) => ({
             name: s.trim(),
-            id: index + 1,
-            ...(subjects.find((s) => s.name === s) || {}),
+            id: Math.max(...(subjects.map((sub) => sub.id) || [] || 0)) + index,
+            ...(subjects.find((sub) => sub.name === s.trim()) || {}),
           })),
         });
       }}
