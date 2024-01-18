@@ -940,7 +940,7 @@ function GetTodayAttendance({
                         )}
                         %
                       </td>
-                      <td>{getRequiredLectures(subject, days).toFixed(0)}</td>
+                      <td>{getRequiredLectures(subject, days)}</td>
                     </tr>
                   );
                 })}
@@ -1046,16 +1046,37 @@ function getAttendedLecturesPercentage(subject, days) {
   const attendedLectures = getAttendedLecturesNumber(subject, days);
   return (attendedLectures / totalLectures) * 100;
 }
-
 function getRequiredLectures(subject, days) {
   // get the number of required lectures to meet 75% attendance
-  const totalLectures = getTotalLecturesNumber(subject, days);
-  const attendedLectures = getAttendedLecturesNumber(subject, days);
-  const requiredLectures = Math.round(
-    totalLectures * (76 / 100) - attendedLectures
+  let attendedLectures = getAttendedLecturesNumber(subject, days);
+  let totalLectures = getTotalLecturesNumber(subject, days);
+
+  // Calculate the number of additional lectures needed to reach 75% attendance
+  let requiredLectures = Math.ceil(
+    (0.75 * totalLectures - attendedLectures) / (1 - 0.75)
   );
-  return requiredLectures < 0 ? 0 : requiredLectures;
+
+  // Ensure that the result is not negative
+  return Math.max(requiredLectures, 0);
 }
+
+// function getRequiredLectures(subject, days) {
+//   // get the number of required lectures to meet 75% attendance
+//   let attendedLectures = getAttendedLecturesNumber(subject, days);
+//   let totalLectures = getTotalLecturesNumber(subject, days);
+//   let requiredLectures = 0;
+//   while (requiredLectures < 100) {
+//     const Percentage = (attendedLectures / totalLectures) * 100;
+//     if (Percentage <= 75) {
+//       requiredLectures += 1;
+//       attendedLectures += 1;
+//       totalLectures += 1;
+//     } else {
+//       break;
+//     }
+//   }
+//   return requiredLectures < 0 ? 0 : Math.floor(requiredLectures);
+// }
 
 function Calendar({ info, days, todayDate, setToDayDate, originalDate }) {
   const noOfMonth = getNoOfMonth(info.startDate, info.endDate);
