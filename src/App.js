@@ -107,9 +107,8 @@ const subjects = [
   },
 ];
 
-function TimeTable({ days }) {
-  const absentRatio = 0;
-
+function TimeTable({ days, info }) {
+  const subjects = info.timeTable;
   return (
     <div>
       <table className="timetable" style={{ borderCollapse: "collapse" }}>
@@ -318,7 +317,7 @@ function App() {
     const days = JSON.parse(localStorage.getItem("days"));
     console.log(info);
     setInfo(info || {});
-    setDays(days ?? {});
+    setDays(days || {});
   }, []);
 
   useEffect(() => {
@@ -344,6 +343,9 @@ function App() {
         )}
         {(edit || !info?.subjects) && (
           <GetSubjectNames info={info} setInfo={setInfo} />
+        )}
+        {(edit || !info?.timeTable) && info?.subjects && (
+          <SetTimeTable info={info} setInfo={setInfo} />
         )}
         {edit && <button onClick={() => setEdit(false)}>Save Edit</button>}
 
@@ -375,7 +377,13 @@ function App() {
 }
 
 function isAllDataInserted(info) {
-  return info.className && info.startDate && info.endDate && info.subjects;
+  return (
+    info.className &&
+    info.startDate &&
+    info.endDate &&
+    info.subjects &&
+    info.timeTable
+  );
 }
 
 function GetClassInfo({ info, setInfo }) {
@@ -439,7 +447,12 @@ function GetStartAndEndDate({ info, setInfo }) {
 
 function GetSubjectNames({ info, setInfo }) {
   const [value, setValue] = useState(
-    info?.subjects?.map((s) => s.name).join(",") || ""
+    info?.subjects?.map((s) => s.name).join(",") ||
+      [...subjects]
+        .sort((a, b) => a.id - b.id)
+        .map((s) => s.name)
+        .join(",") ||
+      ""
   );
   return (
     <form
@@ -447,9 +460,11 @@ function GetSubjectNames({ info, setInfo }) {
         e.preventDefault();
         setInfo({
           ...info,
-          subjects: value
-            .split(",")
-            .map((s, index) => ({ name: s.trim(), id: index + 1 })),
+          subjects: value.split(",").map((s, index) => ({
+            name: s.trim(),
+            id: index + 1,
+            ...(subjects.find((s) => s.name === s) || {}),
+          })),
         });
       }}
     >
@@ -460,6 +475,156 @@ function GetSubjectNames({ info, setInfo }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+function SetTimeTable({ info, setInfo }) {
+  const noOfDays = 5;
+  const [subjectsValues, setSubjectsValues] = useState(
+    convertDefaultSubjectsToSubjectsValues()
+  );
+  function convertDefaultSubjectsToSubjectsValues() {
+    const defaultSubjects = subjects;
+    const subjectsValues = {};
+
+    for (let day = 1; day <= noOfDays; day++) {
+      subjectsValues[day] = [];
+
+      for (const defaultSubject of defaultSubjects) {
+        if (
+          defaultSubject.lectures[day] &&
+          info.subjects.find((s) => s.id === defaultSubject.id)
+        ) {
+          for (const lecture of defaultSubject.lectures[day]) {
+            subjectsValues[day].push({
+              name: info.subjects.find((s) => s.id === defaultSubject.id).name,
+              id: info.subjects.find((s) => s.id === defaultSubject.id).id,
+              startTime: lecture.startTime,
+              endTime: lecture.endTime,
+            });
+          }
+        }
+      }
+    }
+    return subjectsValues;
+  }
+  function convertSubjectValuesToDefaultSubjectsValues() {
+    const days = Object.keys(subjectsValues);
+
+    const res = info.subjects.map((sub) => {
+      const lectures = {};
+      for (const day of days) {
+        if (!subjectsValues[day]) continue;
+        if (!subjectsValues[day].find((s) => s.id === sub.id)) continue;
+        if (lectures[day] === undefined) lectures[day] = [];
+        for (const lecture of subjectsValues[day]) {
+          if (lecture.id === sub.id) {
+            lectures[day].push({
+              startTime: lecture.startTime,
+              endTime: lecture.endTime,
+            });
+          }
+        }
+      }
+      return {
+        name: sub.name,
+        id: sub.id,
+        lectures,
+      };
+    });
+    return res;
+  }
+  function onChangeHandler(value, day, index, key) {
+    setSubjectsValues((prev) => ({
+      ...prev,
+      [day]: [
+        ...prev[day].map((s, i) => (i === index ? { ...s, [key]: value } : s)),
+      ],
+    }));
+  }
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        setInfo((prev) => ({
+          ...prev,
+          timeTable: convertSubjectValuesToDefaultSubjectsValues(),
+        }));
+      }}
+    >
+      {Array.from({ length: noOfDays }).map((_, day) => (
+        <div key={day + 1}>
+          <span>{getWeekName(day + 1)}</span>
+          {subjectsValues[day + 1] &&
+            subjectsValues[day + 1].map((subject, index) => (
+              <div>
+                <select
+                  id="subjectsInput"
+                  placeholder={"Subject " + (index + 1)}
+                  value={subjectsValues[day + 1][index].name}
+                  onChange={(e) => {
+                    onChangeHandler(e.target.value, day + 1, index, "name");
+                    onChangeHandler(
+                      info.subjects.find((s) => s.name === e.target.value).id,
+                      day + 1,
+                      index,
+                      "id"
+                    );
+                  }}
+                >
+                  {info?.subjects?.map((s) => (
+                    <option key={s.id} value={s.name}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+                <div>
+                  <input
+                    type={"number"}
+                    min={8}
+                    max={17}
+                    placeholder="Start Time"
+                    value={subjectsValues[day + 1][index].startTime}
+                    onChange={(e) =>
+                      onChangeHandler(
+                        e.target.value,
+                        day + 1,
+                        index,
+                        "startTime"
+                      )
+                    }
+                  />
+                  <input
+                    type={"number"}
+                    min={8}
+                    max={17}
+                    placeholder="End Time"
+                    value={subjectsValues[day + 1][index].endTime}
+                    onChange={(e) =>
+                      onChangeHandler(e.target.value, day + 1, index, "endTime")
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          <button
+            onClick={(e) =>
+              setSubjectsValues((prev) => ({
+                ...prev,
+                [day + 1]: [
+                  ...(prev[day + 1] || []),
+                  { name: "", startTime: "", endTime: "" },
+                ],
+              }))
+            }
+          >
+            Add
+          </button>
+        </div>
+      ))}
       <button type="submit">Submit</button>
     </form>
   );
@@ -600,20 +765,20 @@ function GetTodayAttendance({
   };
 
   const charts = {
-    "Attendance Ratio": {
-      chartType: "PieChart",
-      data: chartAttendanceRatio,
-      options: {
-        title: "Attendance Ratio",
-
-        ...commonOptions,
-      },
-    },
     "Attended Lectures": {
       chartType: "PieChart",
       data: chartAttendedLectures,
       options: {
         title: "Attended Lectures",
+
+        ...commonOptions,
+      },
+    },
+    "Attendance Ratio": {
+      chartType: "PieChart",
+      data: chartAttendanceRatio,
+      options: {
+        title: "Attendance Ratio",
 
         ...commonOptions,
       },
@@ -660,7 +825,7 @@ function GetTodayAttendance({
       </div>
       {showTimeTable ? (
         <div className="attendance-table">
-          <TimeTable days={days} />
+          <TimeTable days={days} info={info} />
         </div>
       ) : (
         <div className="attendance-table">
