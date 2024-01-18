@@ -561,6 +561,19 @@ function SetTimeTable({ info, setInfo }) {
           {subjectsValues[day + 1] &&
             subjectsValues[day + 1].map((subject, index) => (
               <div>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSubjectsValues((prev) => ({
+                      ...prev,
+                      [day + 1]: [
+                        ...prev[day + 1].filter((s, i) => i !== index),
+                      ],
+                    }));
+                  }}
+                >
+                  Remove
+                </button>
                 <select
                   id="subjectsInput"
                   placeholder={"Subject " + (index + 1)}
