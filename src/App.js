@@ -675,6 +675,10 @@ function GetTodayAttendance({
     id: subject.id,
     values: [subject.name, getAttendedLecturesPercentage(subject, days)],
   }));
+  const requiredLectures = info.subjects.map((subject) => ({
+    id: subject.id,
+    values: [subject.name, getRequiredLectures(subject, days)],
+  }));
   const todayAttendance = info.subjects.map((subject) => ({
     id: subject.id,
     values: [
@@ -692,6 +696,7 @@ function GetTodayAttendance({
     Attended: attendedLectures,
     Lectures: lectures,
     Percentage: attendedPercentage,
+    "Required Lectures": requiredLectures,
   };
   const sortedData = useMemo(() => {
     if (!sortCol) return info.subjects;
@@ -935,6 +940,7 @@ function GetTodayAttendance({
                         )}
                         %
                       </td>
+                      <td>{getRequiredLectures(subject, days).toFixed(0)}</td>
                     </tr>
                   );
                 })}
@@ -1039,6 +1045,16 @@ function getAttendedLecturesPercentage(subject, days) {
   const totalLectures = getTotalLecturesNumber(subject, days);
   const attendedLectures = getAttendedLecturesNumber(subject, days);
   return (attendedLectures / totalLectures) * 100;
+}
+
+function getRequiredLectures(subject, days) {
+  // get the number of required lectures to meet 75% attendance
+  const totalLectures = getTotalLecturesNumber(subject, days);
+  const attendedLectures = getAttendedLecturesNumber(subject, days);
+  const requiredLectures = Math.round(
+    totalLectures * (76 / 100) - attendedLectures
+  );
+  return requiredLectures < 0 ? 0 : requiredLectures;
 }
 
 function Calendar({ info, days, todayDate, setToDayDate, originalDate }) {
