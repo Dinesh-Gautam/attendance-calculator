@@ -874,19 +874,30 @@ function GetTodayAttendance({
           <span style={{ fontSize: "0.8em" }}>Today's Date </span>
           <span className="bold">{originalDate.toDateString()}</span>
         </div>
-        <div>
-          <button
-            onClick={(e) => setEdit(true)}
-            style={{ marginLeft: "1em", display: "inline-block" }}
-          >
-            Edit
-          </button>
-          <button
-            onClick={(e) => setShowTimeTable((prev) => !prev)}
-            style={{ marginLeft: "1em", display: "inline-block" }}
-          >
+        <div
+          style={{
+            marginLeft: "1em",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "0.5em",
+          }}
+        >
+          <button onClick={(e) => setEdit(true)}>Edit</button>
+          <button onClick={(e) => setShowTimeTable((prev) => !prev)}>
             {showTimeTable ? "Hide" : "Show"}
             TimeTable
+          </button>
+          <button
+            style={{
+              background: "rgba(255,0,0,0.1)",
+            }}
+            onClick={(e) =>
+              window.confirm(
+                "Are you sure you want to delete all of the data?"
+              ) && setDays({})
+            }
+          >
+            Clear Data
           </button>
         </div>
       </div>
