@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Attendance Calculator",
+  "name": "Attendance Calculator App",
   "icons": [
     {
       "src": "favicon.ico",
