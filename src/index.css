@@ -142,3 +142,52 @@ table.calendar button {
     font-size: 0.7em;
     padding : 0;
 }
+
+
+.timeTable-editor {
+    display: grid;
+    grid-template-columns: 100px auto min-content;
+    align-items: center;
+    gap : 0.5em;
+    background : rgba(0,0,0,0.02);
+    border-radius: 6px;
+    padding: 0.2em;
+    padding-inline: 1em;
+}
+.timeTable-editor button {
+    margin : 0;
+}
+
+
+.timeTable-editor-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap : 0.2em;
+    overflow: auto;
+}
+
+
+.timeTable-editor-subject {
+    background : rgba(0,0,0,0.05);
+    border-radius: 6px;
+    padding : 0.5em;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap : 4px;
+    max-width: 100%;
+}
+
+.timeTable-editor-subject select {
+    width: 100%;
+}
+
+.timeTable-editor-subject input {
+    flex : 1;
+}
+
+.timeTable-editor-subject button {
+    margin: 0;
+    background : transparent;
+}

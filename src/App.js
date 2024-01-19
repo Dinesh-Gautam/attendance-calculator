@@ -547,6 +547,9 @@ function SetTimeTable({ info, setInfo }) {
 
   return (
     <form
+      style={{
+        width: "90%",
+      }}
       onSubmit={(e) => {
         e.preventDefault();
         setInfo((prev) => ({
@@ -556,73 +559,113 @@ function SetTimeTable({ info, setInfo }) {
       }}
     >
       {Array.from({ length: noOfDays }).map((_, day) => (
-        <div key={day + 1}>
+        <div className="timeTable-editor" key={day + 1}>
           <span>{getWeekName(day + 1)}</span>
-          {subjectsValues[day + 1] &&
-            subjectsValues[day + 1].map((subject, index) => (
-              <div>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSubjectsValues((prev) => ({
-                      ...prev,
-                      [day + 1]: [
-                        ...prev[day + 1].filter((s, i) => i !== index),
-                      ],
-                    }));
+          <div className="timeTable-editor-row">
+            {subjectsValues[day + 1] &&
+              subjectsValues[day + 1].map((subject, index) => (
+                <div
+                  className="timeTable-editor-subject"
+                  style={{
+                    minWidth: 100 * ((subject.endTime - subject.startTime) * 2),
                   }}
                 >
-                  Remove
-                </button>
-                <select
-                  id="subjectsInput"
-                  placeholder={"Subject " + (index + 1)}
-                  value={subjectsValues[day + 1][index].name}
-                  onChange={(e) => {
-                    onChangeHandler(e.target.value, day + 1, index, "name");
-                    onChangeHandler(
-                      info.subjects.find((s) => s.name === e.target.value).id,
-                      day + 1,
-                      index,
-                      "id"
-                    );
-                  }}
-                >
-                  {info?.subjects?.map((s) => (
-                    <option key={s.id} value={s.name}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-                <div>
-                  <input
-                    type={"number"}
-                    min={8}
-                    max={17}
-                    placeholder="Start Time"
-                    value={subjectsValues[day + 1][index].startTime}
-                    onChange={(e) =>
-                      onChangeHandler(
-                        e.target.value,
-                        day + 1,
-                        index,
-                        "startTime"
-                      )
-                    }
-                  />
-                  <input
-                    type={"number"}
-                    min={8}
-                    max={17}
-                    placeholder="End Time"
-                    value={subjectsValues[day + 1][index].endTime}
-                    onChange={(e) =>
-                      onChangeHandler(e.target.value, day + 1, index, "endTime")
-                    }
-                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "4px",
+                    }}
+                  >
+                    <select
+                      style={{ flex: 1 }}
+                      id="subjectsInput"
+                      placeholder={"Subject " + (index + 1)}
+                      value={subjectsValues[day + 1][index].name}
+                      onChange={(e) => {
+                        onChangeHandler(e.target.value, day + 1, index, "name");
+                        onChangeHandler(
+                          info.subjects.find((s) => s.name === e.target.value)
+                            .id,
+                          day + 1,
+                          index,
+                          "id"
+                        );
+                      }}
+                    >
+                      {info?.subjects?.map((s) => (
+                        <option key={s.id} value={s.name}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setSubjectsValues((prev) => ({
+                          ...prev,
+                          [day + 1]: [
+                            ...prev[day + 1].filter((s, i) => i !== index),
+                          ],
+                        }));
+                      }}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="12"
+                        height="12"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="css-i6dzq1"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.5em",
+                    }}
+                  >
+                    <input
+                      type={"number"}
+                      min={8}
+                      max={17}
+                      placeholder="Start Time"
+                      value={subjectsValues[day + 1][index].startTime}
+                      onChange={(e) =>
+                        onChangeHandler(
+                          e.target.value,
+                          day + 1,
+                          index,
+                          "startTime"
+                        )
+                      }
+                    />
+                    <input
+                      type={"number"}
+                      min={8}
+                      max={17}
+                      placeholder="End Time"
+                      value={subjectsValues[day + 1][index].endTime}
+                      onChange={(e) =>
+                        onChangeHandler(
+                          e.target.value,
+                          day + 1,
+                          index,
+                          "endTime"
+                        )
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
           <button
             onClick={(e) => {
               e.preventDefault();
