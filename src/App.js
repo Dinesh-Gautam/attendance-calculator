@@ -864,7 +864,7 @@ function GetTodayAttendance({
                   {Object.keys(tableValues).map((heading, index) => {
                     return (
                       <th
-                        style={{ cursor: "pointer" }}
+                        style={{ cursor: "pointer", whiteSpace: "nowrap" }}
                         key={index}
                         onClick={() => headingClickHandler(heading)}
                       >
@@ -884,7 +884,7 @@ function GetTodayAttendance({
                 {sortedData.map((subject) => {
                   return (
                     <tr key={subject.id}>
-                      <td>{subject.name}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{subject.name}</td>
                       <td style={{ display: "flex", gap: "1em" }}>
                         <button
                           style={
