@@ -226,7 +226,7 @@ function findSubjectWhosEndTimeIsBeforeTime(subjects, time, weekNo) {
     for (let week of Object.keys(subject.lectures)) {
       if (weekNo + 1 === +week) {
         for (let lecture of subject.lectures[week]) {
-          if (time < lecture.endTime && time >= lecture.startTime) {
+          if (time < lecture.endTime && time > lecture.startTime) {
             return { ...lecture, subjectName: subject.name };
           }
         }
@@ -241,8 +241,8 @@ function getSubjectAtTime(subjects, time, weekNo) {
     for (let week of Object.keys(subject.lectures)) {
       if (weekNo + 1 === +week) {
         for (let lecture of subject.lectures[week]) {
+          console.log(time, lecture.startTime);
           if (!time || time === lecture.startTime) {
-            console.log(lecture);
             return { ...lecture, subjectName: subject.name, id: subject.id };
           }
         }
@@ -486,7 +486,7 @@ function SetTimeTable({ info, setInfo }) {
     convertDefaultSubjectsToSubjectsValues()
   );
   function convertDefaultSubjectsToSubjectsValues() {
-    const defaultSubjects = subjects;
+    const defaultSubjects = info?.timeTable || subjects;
     const subjectsValues = {};
 
     for (let day = 1; day <= noOfDays; day++) {
@@ -522,8 +522,8 @@ function SetTimeTable({ info, setInfo }) {
         for (const lecture of subjectsValues[day]) {
           if (lecture.id === sub.id) {
             lectures[day].push({
-              startTime: lecture.startTime,
-              endTime: lecture.endTime,
+              startTime: +lecture.startTime,
+              endTime: +lecture.endTime,
             });
           }
         }
@@ -624,15 +624,16 @@ function SetTimeTable({ info, setInfo }) {
               </div>
             ))}
           <button
-            onClick={(e) =>
+            onClick={(e) => {
+              e.preventDefault();
               setSubjectsValues((prev) => ({
                 ...prev,
                 [day + 1]: [
                   ...(prev[day + 1] || []),
                   { name: "", startTime: "", endTime: "" },
                 ],
-              }))
-            }
+              }));
+            }}
           >
             Add
           </button>
