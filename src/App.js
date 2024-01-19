@@ -679,6 +679,10 @@ function GetTodayAttendance({
     id: subject.id,
     values: [subject.name, getRequiredLectures(subject, days)],
   }));
+  const allowedHolidays = info.subjects.map((subject) => ({
+    id: subject.id,
+    values: [subject.name, getAllowedHolidays(subject, days)],
+  }));
   const todayAttendance = info.subjects.map((subject) => ({
     id: subject.id,
     values: [
@@ -697,6 +701,7 @@ function GetTodayAttendance({
     Lectures: lectures,
     Percentage: attendedPercentage,
     "Required Lectures": requiredLectures,
+    "Allowed Holidays": allowedHolidays,
   };
   const sortedData = useMemo(() => {
     if (!sortCol) return info.subjects;
@@ -775,7 +780,6 @@ function GetTodayAttendance({
         .reduce((a, b) => a + b, 0),
     ],
   ];
-  console.log(chartAttendanceRatio);
 
   const commonOptions = {
     legend: "none",
@@ -941,6 +945,7 @@ function GetTodayAttendance({
                         %
                       </td>
                       <td>{getRequiredLectures(subject, days)}</td>
+                      <td>{getAllowedHolidays(subject, days)}</td>
                     </tr>
                   );
                 })}
@@ -1047,36 +1052,32 @@ function getAttendedLecturesPercentage(subject, days) {
   return (attendedLectures / totalLectures) * 100;
 }
 function getRequiredLectures(subject, days) {
-  // get the number of required lectures to meet 75% attendance
   let attendedLectures = getAttendedLecturesNumber(subject, days);
   let totalLectures = getTotalLecturesNumber(subject, days);
 
-  // Calculate the number of additional lectures needed to reach 75% attendance
   let requiredLectures = Math.ceil(
     (0.75 * totalLectures - attendedLectures) / (1 - 0.75)
   );
 
-  // Ensure that the result is not negative
   return Math.max(requiredLectures, 0);
 }
 
-// function getRequiredLectures(subject, days) {
-//   // get the number of required lectures to meet 75% attendance
-//   let attendedLectures = getAttendedLecturesNumber(subject, days);
-//   let totalLectures = getTotalLecturesNumber(subject, days);
-//   let requiredLectures = 0;
-//   while (requiredLectures < 100) {
-//     const Percentage = (attendedLectures / totalLectures) * 100;
-//     if (Percentage <= 75) {
-//       requiredLectures += 1;
-//       attendedLectures += 1;
-//       totalLectures += 1;
-//     } else {
-//       break;
-//     }
-//   }
-//   return requiredLectures < 0 ? 0 : Math.floor(requiredLectures);
-// }
+function getAllowedHolidays(subject, days) {
+  let totalLectures = getTotalLecturesNumber(subject, days);
+  let attendedLectures = getAttendedLecturesNumber(subject, days);
+
+  // calculate the number of allowed holidays by still maintaining 75% attendance
+
+  let allowedHolidays = 0;
+  let percentage = (attendedLectures / totalLectures) * 100;
+  while (percentage > 75) {
+    allowedHolidays += 1;
+    totalLectures += 1;
+    percentage = (attendedLectures / totalLectures) * 100;
+  }
+
+  return Math.max(allowedHolidays - 1, 0);
+}
 
 function Calendar({ info, days, todayDate, setToDayDate, originalDate }) {
   const noOfMonth = getNoOfMonth(info.startDate, info.endDate);
