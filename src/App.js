@@ -858,16 +858,14 @@ function GetTodayAttendance({
         style={{
           display: "flex",
           justifyContent: "space-between",
-          paddingInline: "2em",
+          paddingInline: "1em",
           alignItems: "center",
-          marginTop: "-1em",
         }}
       >
-        <div />
         <div
           style={{
             display: "flex",
-            alignItems: "center",
+            alignItems: "flex-start",
             flexDirection: "column",
           }}
         >
@@ -876,7 +874,6 @@ function GetTodayAttendance({
         </div>
         <div
           style={{
-            marginLeft: "1em",
             display: "flex",
             flexWrap: "wrap",
             gap: "0.5em",
