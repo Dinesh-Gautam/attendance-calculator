@@ -3,6 +3,8 @@ import Chart from "react-google-charts";
 import { TimeTable } from "../App";
 import {
   Button,
+  Card,
+  Checkbox,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -12,6 +14,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Select,
+  SelectItem,
+  SelectSection,
   Table,
   TableBody,
   TableCell,
@@ -166,6 +171,17 @@ function GetTodayAttendance({
   const commonOptions = {
     legend: "none",
     pieSliceText: "label",
+    backgroundColor: {
+      fill: "transparent",
+      stroke: "red",
+    },
+    chartArea: {
+      backgroundColor: "transparent",
+    },
+    titleTextStyle: {
+      color: "white",
+      fontName: "Inter",
+    },
   };
 
   const charts = {
@@ -190,7 +206,7 @@ function GetTodayAttendance({
   };
 
   return (
-    <div className="attendance-table-container">
+    <div>
       <div
         style={{
           display: "flex",
@@ -206,7 +222,7 @@ function GetTodayAttendance({
             flexDirection: "column",
           }}
         >
-          <span style={{ fontSize: "0.8em" }}>Today's Date </span>
+          <span className="text-xs">Today's Date </span>
           <span style={{ fontWeight: "bold" }}>
             {originalDate.toDateString()}
           </span>
@@ -263,14 +279,12 @@ function GetTodayAttendance({
           <TimeTable days={days} info={info} />
         </div>
       ) : (
-        <div>
-          <div
-            style={{ display: "flex", alignItems: "baseline " }}
-            className="attendance-table-header"
-          >
-            <span>Showing attendance: </span>
-            <span className="bold">{todaysDate}</span>
-            {/* <p>select subjects in which you were present</p> */}
+        <Card className="p-4 mx-4 overflow-auto">
+          <div className="flex items-center mb-4">
+            <div>
+              <p className="text-xs">Showing attendance</p>
+              <span className="font-bold">{todaysDate}</span>
+            </div>
             <div
               style={{
                 marginLeft: "1em",
@@ -279,10 +293,9 @@ function GetTodayAttendance({
                 alignItems: "baseline",
               }}
             >
-              <input
-                id="showAllSubjects"
+              <Checkbox
                 type="checkbox"
-                checked={!!info?.options?.showAllSubjects}
+                defaultSelected={!!info?.options?.showAllSubjects}
                 onChange={(e) =>
                   setInfo((prev) => ({
                     ...prev,
@@ -292,13 +305,13 @@ function GetTodayAttendance({
                     },
                   }))
                 }
-              />
-              <label htmlFor="showAllSubjects">Show All Subjects</label>
+              >
+                Show All Subjects
+              </Checkbox>
             </div>
           </div>
 
-          <div style={{ display: "flex" }}>
-            {console.log()}
+          <div className="flex gap-4">
             <Table
               sortDescriptor={{
                 direction: sortOrder === 1 ? "descending" : "ascending",
@@ -468,25 +481,34 @@ function GetTodayAttendance({
               </TableF> */}
             </Table>
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                flex: 1,
-              }}
+            <Card
+              className="p-4 w-max flex flex-col gap-4 flex-nowrap min-w-fit"
+              //   style={{
+              //     display: "flex",
+              //     flexDirection: "column",
+              //     alignItems: "flex-start",
+              //     flex: 1,
+              //   }}
             >
-              <select
-                value={displayChart}
-                onChange={(e) => setDisplayChart(e.target.value)}
+              <Select
+                classNames={{
+                  popoverContent: "bg-default-800 text-background",
+                }}
+                size="sm"
+                className="w-full mw-max"
+                label="Select chart type"
+                selectedKeys={[displayChart]}
+                onChange={(e) =>
+                  e.target.value && setDisplayChart((prev) => e.target.value)
+                }
               >
                 {Object.keys(charts).map((val, index) => (
-                  <option key={index} value={val}>
+                  <SelectItem variant="faded" key={val} value={val}>
                     {val}
-                  </option>
+                  </SelectItem>
                 ))}
-              </select>
-              <div>
+              </Select>
+              <div className="w-max">
                 <Chart
                   chartType="PieChart"
                   data={charts[displayChart].data}
@@ -495,9 +517,9 @@ function GetTodayAttendance({
                   height={"400px"}
                 />
               </div>
-            </div>
+            </Card>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );
