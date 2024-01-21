@@ -49,7 +49,7 @@ function GetTodayAttendance({
 }) {
   const [showTimeTable, setShowTimeTable] = useState(false);
   const [sortCol, setSortCol] = useState(null);
-  const [sortOrder, setSortOrder] = useState(1);
+  const [sortOrder, setSortOrder] = useState(null);
 
   const [displayChart, setDisplayChart] = useState("Attended Lectures");
 

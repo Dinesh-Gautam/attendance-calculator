@@ -113,7 +113,7 @@ const subjects = [
 export function TimeTable({ days, info }) {
   const subjects = info.timeTable;
   return (
-    <div>
+    <Card className="mx-4 p-4 flex flex-row justify-center">
       <table className="timetable" style={{ borderCollapse: "collapse" }}>
         <thead>
           <tr>
@@ -192,7 +192,7 @@ export function TimeTable({ days, info }) {
           })}
         </tbody>
       </table>
-    </div>
+    </Card>
   );
 }
 
