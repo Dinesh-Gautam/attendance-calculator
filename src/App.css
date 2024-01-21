@@ -2,3 +2,38 @@ main {
     min-height : 100vh;
 }
 
+.timetable {
+    border-spacing:  1px !important;
+    border-collapse: separate;
+}
+
+.timetable tr * {
+    padding : 1em;
+    height: 3em;
+}
+
+.timetable th , .timetable tbody tr td:first-child {
+    /* background : rgba(0,0,0,0.05); */
+    vertical-align: middle !important;
+}
+
+.timetable tbody td{
+    /* border-bottom : 1px solid hsl(var(--nextui-default));
+    border-right : 1px solid hsl(var(--nextui-default)); */
+    border-radius: var(--nextui-radius-small);
+    background : hsl(var(--nextui-default-100));
+} 
+
+.timetable th , .timetable td {
+    vertical-align: baseline;
+    text-align: start;
+    padding-right : 4em;
+}
+.timetable th span {
+    padding-inline: 2px;
+}
+.timetable th span.timeSuffix {
+    opacity: 0.5;
+    font-size: 0.7em;
+    padding : 0;
+}

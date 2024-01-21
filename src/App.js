@@ -113,8 +113,8 @@ const subjects = [
 export function TimeTable({ days, info }) {
   const subjects = info.timeTable;
   return (
-    <Card className="mx-4 p-4 flex flex-row justify-center">
-      <table className="timetable" style={{ borderCollapse: "collapse" }}>
+    <Card className="mx-4 p-4 flex flex-row justify-center overflow-auto min-w-fit">
+      <table className="timetable" borderSpacing="1">
         <thead>
           <tr>
             <td />
@@ -167,10 +167,21 @@ export function TimeTable({ days, info }) {
                     return (
                       <td
                         style={{
-                          backgroundColor: `rgba(${
-                            presentRatio <= 75 ? 75 - presentRatio + 75 : 0
-                          }%,${presentRatio > 75 ? presentRatio : 0}%,0%, ${
-                            isNaN(presentRatio) ? "0" : "0.15"
+                          // backgroundColor: `hsl(${
+                          //   presentRatio <= 75 ? 75 - presentRatio + 75 : 0
+                          // }%,${presentRatio > 75 ? presentRatio : 0}%,0%, ${
+                          //   isNaN(presentRatio) ? "0" : "0.15"
+                          // })`,
+
+                          backgroundColor: `hsl(${
+                            presentRatio <= 75
+                              ? "var(--nextui-danger)"
+                              : "var(--nextui-success)"
+                          } / ${
+                            Math.min(
+                              Math.abs(presentRatio / 100 - 0.75) + 0.75,
+                              1
+                            ) - 0.35
                           })`,
                         }}
                         rowSpan={subject.endTime - subject.startTime}
