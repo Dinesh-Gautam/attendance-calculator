@@ -364,7 +364,7 @@ function GetTodayAttendance({
                   );
                 })}
               </TableHeader>
-              <TableBody>
+              <TableBody emptyContent={"No Subjects to display."}>
                 {(!info?.options?.showAllSubjects
                   ? sortedData.filter((subject) =>
                       info?.subjects?.some(
@@ -467,56 +467,79 @@ function GetTodayAttendance({
                     </TableRow>
                   );
                 })}
-                <TableRow>
-                  <TableCell />
-                  <TableCell className="flex gap-2">
-                    <Button
-                      variant="flat"
-                      onClick={(e) =>
-                        setDays((prev) => ({
-                          ...prev,
-                          [todaysDate]: {
-                            ...prev[todaysDate],
-                            ...info.subjects.reduce((acc, subject) => {
-                              acc[subject.id] = {
-                                present: true,
-                                absent: false,
-                              };
-                              return acc;
-                            }, {}),
-                          },
-                        }))
-                      }
-                    >
-                      All present
-                    </Button>
-                    <Button
-                      variant="flat"
-                      onClick={(e) =>
-                        setDays((prev) => ({
-                          ...prev,
-                          [todaysDate]: {
-                            ...prev[todaysDate],
-                            ...info.subjects.reduce((acc, subject) => {
-                              acc[subject.id] = {
-                                present: false,
-                                absent: true,
-                              };
-                              return acc;
-                            }, {}),
-                          },
-                        }))
-                      }
-                    >
-                      All Absent
-                    </Button>
-                  </TableCell>
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                  <TableCell />
-                </TableRow>
+                {console.log(
+                  info.subjects.filter(
+                    (sub) => sub.lectures[todayDate.getDay()]
+                  )
+                )}
+
+                {(info?.options?.showAllSubjects ||
+                  info.subjects.filter(
+                    (sub) => sub.lectures[todayDate.getDay()]
+                  ).length > 0) && (
+                  <TableRow>
+                    <TableCell />
+                    <TableCell className="flex gap-2">
+                      <Button
+                        variant="flat"
+                        onClick={(e) =>
+                          setDays((prev) => ({
+                            ...prev,
+                            [todaysDate]: {
+                              ...prev[todaysDate],
+                              ...info.subjects.reduce((acc, subject) => {
+                                if (
+                                  (!info?.options?.showAllSubjects &&
+                                    subject.lectures?.[todayDate.getDay()]) ||
+                                  info?.options?.showAllSubjects
+                                ) {
+                                  acc[subject.id] = {
+                                    present: true,
+                                    absent: false,
+                                  };
+                                }
+                                return acc;
+                              }, {}),
+                            },
+                          }))
+                        }
+                      >
+                        All present
+                      </Button>
+                      <Button
+                        variant="flat"
+                        onClick={(e) =>
+                          setDays((prev) => ({
+                            ...prev,
+                            [todaysDate]: {
+                              ...prev[todaysDate],
+                              ...info.subjects.reduce((acc, subject) => {
+                                if (
+                                  (!info?.options?.showAllSubjects &&
+                                    subject.lectures?.[todayDate.getDay()]) ||
+                                  info?.options?.showAllSubjects
+                                ) {
+                                  acc[subject.id] = {
+                                    present: false,
+                                    absent: true,
+                                  };
+                                }
+                                return acc;
+                              }, {}),
+                            },
+                          }))
+                        }
+                      >
+                        All Absent
+                      </Button>
+                    </TableCell>
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                    <TableCell />
+                  </TableRow>
+                )}
               </TableBody>
               {/* <TableF>
          
