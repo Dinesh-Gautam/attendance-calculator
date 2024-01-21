@@ -307,7 +307,7 @@ function getMinStartTimeOfSubjects(subjects) {
   return min;
 }
 
-function App() {
+function App({ toggleTheme }) {
   const [info, setInfo] = useState(null);
   const [days, setDays] = useState(null);
   const [edit, setEdit] = useState(false);
@@ -363,6 +363,7 @@ function App() {
               setToDayDate={setToDayDate}
               originalDate={originalDate}
               setEdit={setEdit}
+              toggleTheme={toggleTheme}
             />
             <Calendar
               info={info}

@@ -45,6 +45,7 @@ function GetTodayAttendance({
   todayDate,
   originalDate,
   setEdit,
+  toggleTheme,
 }) {
   const [showTimeTable, setShowTimeTable] = useState(false);
   const [sortCol, setSortCol] = useState(null);
@@ -272,7 +273,7 @@ function GetTodayAttendance({
               </DropdownItem>
               <DropdownItem
                 key="mode"
-                onClick={(e) => setEdit(true)}
+                onClick={toggleTheme}
                 startContent={
                   "dark" ? (
                     <Moon size="1.5em" className={iconClasses} />
@@ -523,7 +524,7 @@ function GetTodayAttendance({
             </Table>
 
             <Card
-              className="p-4 w-max flex flex-col gap-4 flex-nowrap min-w-fit"
+              className="p-4 w-max flex flex-col gap-4 flex-nowrap min-w-fit shadow-small"
               //   style={{
               //     display: "flex",
               //     flexDirection: "column",
