@@ -216,14 +216,7 @@ function GetTodayAttendance({
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "1em",
-          alignItems: "center",
-        }}
-      >
+      <div className="flex flex-row gap-2 flex-wrap p-4 pb-4 items-center md:justify-between">
         <div
           style={{
             display: "flex",
@@ -251,8 +244,8 @@ function GetTodayAttendance({
             onClick={(e) => setShowTimeTable((prev) => !prev)}
           >
             <TableIcon />
-            {showTimeTable ? "Hide" : "Show"}
-            TimeTable
+            <span>{showTimeTable ? "Hide " : "Show "}</span>
+            <span>Timetable</span>
           </Button>
           <Dropdown
             className="bg-foreground text-background"

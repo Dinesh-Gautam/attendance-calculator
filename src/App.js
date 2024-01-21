@@ -4,6 +4,7 @@ import Chart from "react-google-charts";
 import GetTodayAttendance from "./components/GetTodaysAttendance";
 import { Card } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/react";
 
 const subjects = [
   {
@@ -348,21 +349,39 @@ function App({ toggleTheme }) {
 
   return (
     info !== null && (
-      <div className="App">
-        {(edit || !info?.className) && (
-          <GetClassInfo info={info} setInfo={setInfo} />
+      <>
+        {(edit || !isAllDataInserted(info)) && (
+          <div className="p-4 flex flex-col gap-4 items-start">
+            <div className="flex flex-row gap-4 w-full items-start">
+              {(edit || !info?.className) && (
+                <GetClassInfo info={info} setInfo={setInfo} />
+              )}
+              {(edit || !info?.startDate || !info?.endDate) && (
+                <GetStartAndEndDate info={info} setInfo={setInfo} />
+              )}
+              {(edit || !info?.subjects) && (
+                <GetSubjectNames info={info} setInfo={setInfo} />
+              )}
+            </div>
+            {(edit || !info?.timeTable) && info?.subjects && (
+              <SetTimeTable info={info} setInfo={setInfo} />
+            )}
+            {edit && (
+              <Card className="p-4 mt-auto flex flex-row gap-3 justify-end items-center fixed inset-x-4 bottom-4">
+                <Button
+                  color="danger"
+                  variant="light"
+                  onClick={() => setEdit(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="flat" onClick={() => setEdit(false)}>
+                  Save Edit
+                </Button>
+              </Card>
+            )}
+          </div>
         )}
-        {(edit || !info?.startDate || !info?.endDate) && (
-          <GetStartAndEndDate info={info} setInfo={setInfo} />
-        )}
-        {(edit || !info?.subjects) && (
-          <GetSubjectNames info={info} setInfo={setInfo} />
-        )}
-        {(edit || !info?.timeTable) && info?.subjects && (
-          <SetTimeTable info={info} setInfo={setInfo} />
-        )}
-        {edit && <button onClick={() => setEdit(false)}>Save Edit</button>}
-
         {!edit && isAllDataInserted(info) && (
           <>
             <GetTodayAttendance
@@ -386,7 +405,7 @@ function App({ toggleTheme }) {
             />
           </>
         )}
-      </div>
+      </>
     )
   );
 }
@@ -404,21 +423,44 @@ function isAllDataInserted(info) {
 function GetClassInfo({ info, setInfo }) {
   const [value, setValue] = useState(info?.className || "");
   return (
-    <form
+    <Form
       onSubmit={(e) => {
         e.preventDefault();
         setInfo({ ...info, className: value });
       }}
     >
-      <label for="classNameInput">Class Name</label>
-      <input
-        id="classNameInput"
+      <FormInput
         placeholder="1CE12"
-        value={value}
+        id="classNameInput"
         onChange={(e) => setValue(e.target.value)}
+        value={value}
+        label="Class Name"
       />
-      <button type="submit">Submit</button>
-    </form>
+
+      <FormButton>Submit</FormButton>
+    </Form>
+  );
+}
+
+function Form({ children, ...formProps }) {
+  return (
+    <Card className="p-4 w-fit">
+      <form className="flex flex-col gap-4 max-w-fit" {...formProps}>
+        {children}
+      </form>
+    </Card>
+  );
+}
+
+function FormInput({ ...props }) {
+  return <Input variant="faded" type={props.type || "text"} {...props} />;
+}
+
+function FormButton({ children, onClick }) {
+  return (
+    <Button variant="flat" type="submit">
+      {children}
+    </Button>
   );
 }
 
@@ -428,14 +470,14 @@ function GetStartAndEndDate({ info, setInfo }) {
     endDate: info?.endDate || "",
   });
   return (
-    <form
+    <Form
       onSubmit={(e) => {
         e.preventDefault();
         setInfo({ ...info, ...value });
       }}
     >
-      <label for="startDateInput">Start Date</label>
-      <input
+      <FormInput
+        label="Start Date"
         id="startDateInput"
         type="date"
         value={value.startDate}
@@ -446,8 +488,8 @@ function GetStartAndEndDate({ info, setInfo }) {
           }))
         }
       />
-      <label for="endDateInput">End Date</label>
-      <input
+      <FormInput
+        label="End Date"
         id="endDateInput"
         type="date"
         value={value.endDate}
@@ -455,8 +497,8 @@ function GetStartAndEndDate({ info, setInfo }) {
           setValue((prev) => ({ ...prev, endDate: e.target.value }))
         }
       />
-      <button type="submit">Submit</button>
-    </form>
+      <FormButton type="submit">Submit</FormButton>
+    </Form>
   );
 }
 
@@ -470,7 +512,7 @@ function GetSubjectNames({ info, setInfo }) {
       ""
   );
   return (
-    <form
+    <Form
       onSubmit={(e) => {
         e.preventDefault();
         setInfo({
@@ -483,15 +525,15 @@ function GetSubjectNames({ info, setInfo }) {
         });
       }}
     >
-      <label for="subjectsInput">Class Name</label>
-      <input
+      <FormInput
+        label="Subjects"
         id="subjectsInput"
         placeholder="subject1,subject2,subject3"
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      <button type="submit">Submit</button>
-    </form>
+      <FormButton type="submit">Submit</FormButton>
+    </Form>
   );
 }
 
@@ -706,7 +748,7 @@ function Calendar({ info, days, todayDate, setToDayDate, originalDate }) {
   const noOfMonth = getNoOfMonth(info.startDate, info.endDate);
   return (
     <div className="p-4">
-      <Card className="p-2 flex flex-row gap-2 flex-wrap  justify-between">
+      <Card className="p-2 flex flex-row gap-2 flex-wrap justify-center md:justify-between">
         {[...Array(noOfMonth)].map((_, monthNo) => {
           const date = new Date(info.startDate);
           date.setMonth(monthNo + 1);
