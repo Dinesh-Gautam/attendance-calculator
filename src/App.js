@@ -4,7 +4,7 @@ import Chart from "react-google-charts";
 import GetTodayAttendance from "./components/GetTodaysAttendance";
 import { Card } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/react";
+import { Input, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
 
 const subjects = [
   {
@@ -352,7 +352,7 @@ function App({ toggleTheme }) {
       <>
         {(edit || !isAllDataInserted(info)) && (
           <div className="p-4 flex flex-col gap-4 items-start">
-            <div className="flex flex-row gap-4 w-full items-start">
+            <div className="flex flex-row gap-4 w-full items-start flex-wrap">
               {(edit || !info?.className) && (
                 <GetClassInfo info={info} setInfo={setInfo} />
               )}
@@ -603,144 +603,157 @@ function SetTimeTable({ info, setInfo }) {
   }
 
   return (
-    <form
-      style={{
-        width: "90%",
-      }}
-      onSubmit={(e) => {
-        e.preventDefault();
-        setInfo((prev) => ({
-          ...prev,
-          timeTable: convertSubjectValuesToDefaultSubjectsValues(),
-        }));
-      }}
-    >
-      {Array.from({ length: noOfDays }).map((_, day) => (
-        <div className="timeTable-editor" key={day + 1}>
-          <span>{getWeekName(day + 1)}</span>
-          <div className="timeTable-editor-row">
-            {subjectsValues[day + 1] &&
-              subjectsValues[day + 1].map((subject, index) => (
-                <div
-                  className="timeTable-editor-subject"
-                  style={{
-                    minWidth: 100 * ((subject.endTime - subject.startTime) * 2),
-                  }}
-                >
+    <Card className="p-4 w-full mb-20">
+      <form
+        className="max-w-full w-full"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setInfo((prev) => ({
+            ...prev,
+            timeTable: convertSubjectValuesToDefaultSubjectsValues(),
+          }));
+        }}
+      >
+        {Array.from({ length: noOfDays }).map((_, day) => (
+          <div className="w-full max-w-full mb-2" key={day + 1}>
+            <span className="font-bold text-sm p-2">
+              {getWeekName(day + 1)}
+            </span>
+            {/* <div className="flex flex-col gap-2 items-start md:items-center md:flex-row"> */}
+            <ScrollShadow
+              orientation="horizontal"
+              className=" flex-1 flex flex-row gap-2 p-2 bg-default-100 rounded-2xl shadow-inner shadow-md overflow-auto items-center"
+            >
+              {subjectsValues[day + 1] &&
+                subjectsValues[day + 1].map((subject, index) => (
                   <div
+                    className="flex flex-col gap-1 bg-default-50 p-1 rounded-xl shadow-small focus-within:border-l-3"
                     style={{
-                      display: "flex",
-                      gap: "4px",
+                      minWidth: 200,
+                      // minWidth:
+                      //   100 * ((subject.endTime - subject.startTime) * 2),
+                      borderColor: "hsl(var(--nextui-danger))",
                     }}
                   >
-                    <select
-                      style={{ flex: 1 }}
-                      id="subjectsInput"
-                      placeholder={"Subject " + (index + 1)}
-                      value={subjectsValues[day + 1][index].name}
-                      onChange={(e) => {
-                        onChangeHandler(e.target.value, day + 1, index, "name");
-                        onChangeHandler(
-                          info.subjects.find((s) => s.name === e.target.value)
-                            .id,
-                          day + 1,
-                          index,
-                          "id"
-                        );
-                      }}
-                    >
-                      {info?.subjects?.map((s) => (
-                        <option key={s.id} value={s.name}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setSubjectsValues((prev) => ({
-                          ...prev,
-                          [day + 1]: [
-                            ...prev[day + 1].filter((s, i) => i !== index),
-                          ],
-                        }));
-                      }}
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="12"
-                        height="12"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        fill="none"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="css-i6dzq1"
+                    <div className="flex flex-row gap-1 flex-1 ">
+                      <Select
+                        variant="flat"
+                        size="sm"
+                        style={{ flex: 1 }}
+                        id="subjectsInput"
+                        placeholder={"Subject " + (index + 1)}
+                        selectedKeys={[subjectsValues[day + 1][index].name]}
+                        onChange={(e) => {
+                          onChangeHandler(
+                            e.target.value,
+                            day + 1,
+                            index,
+                            "name"
+                          );
+                          onChangeHandler(
+                            info.subjects.find((s) => s.name === e.target.value)
+                              .id,
+                            day + 1,
+                            index,
+                            "id"
+                          );
+                        }}
                       >
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </button>
-                  </div>
+                        {info?.subjects?.map((s) => (
+                          <SelectItem key={s.name} value={s.name}>
+                            {s.name}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                      <Button
+                        variant="light"
+                        isIconOnly
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSubjectsValues((prev) => ({
+                            ...prev,
+                            [day + 1]: [
+                              ...prev[day + 1].filter((s, i) => i !== index),
+                            ],
+                          }));
+                        }}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="12"
+                          height="12"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="css-i6dzq1"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </Button>
+                    </div>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.5em",
-                    }}
-                  >
-                    <input
-                      type={"number"}
-                      min={8}
-                      max={17}
-                      placeholder="Start Time"
-                      value={subjectsValues[day + 1][index].startTime}
-                      onChange={(e) =>
-                        onChangeHandler(
-                          e.target.value,
-                          day + 1,
-                          index,
-                          "startTime"
-                        )
-                      }
-                    />
-                    <input
-                      type={"number"}
-                      min={8}
-                      max={17}
-                      placeholder="End Time"
-                      value={subjectsValues[day + 1][index].endTime}
-                      onChange={(e) =>
-                        onChangeHandler(
-                          e.target.value,
-                          day + 1,
-                          index,
-                          "endTime"
-                        )
-                      }
-                    />
+                    <div className="flex flex-row gap-1">
+                      <Input
+                        size="sm"
+                        type={"number"}
+                        min={8}
+                        max={17}
+                        placeholder="Start Time"
+                        value={subjectsValues[day + 1][index].startTime}
+                        onChange={(e) =>
+                          onChangeHandler(
+                            e.target.value,
+                            day + 1,
+                            index,
+                            "startTime"
+                          )
+                        }
+                      />
+                      <Input
+                        size="sm"
+                        type={"number"}
+                        min={8}
+                        max={17}
+                        placeholder="End Time"
+                        value={subjectsValues[day + 1][index].endTime}
+                        onChange={(e) =>
+                          onChangeHandler(
+                            e.target.value,
+                            day + 1,
+                            index,
+                            "endTime"
+                          )
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+
+              <Button
+                variant="flat"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSubjectsValues((prev) => ({
+                    ...prev,
+                    [day + 1]: [
+                      ...(prev[day + 1] || []),
+                      { name: "", startTime: "", endTime: "" },
+                    ],
+                  }));
+                }}
+              >
+                Add
+              </Button>
+            </ScrollShadow>
           </div>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              setSubjectsValues((prev) => ({
-                ...prev,
-                [day + 1]: [
-                  ...(prev[day + 1] || []),
-                  { name: "", startTime: "", endTime: "" },
-                ],
-              }));
-            }}
-          >
-            Add
-          </button>
-        </div>
-      ))}
-      <button type="submit">Submit</button>
-    </form>
+          // </div>
+        ))}
+        <FormButton type="submit">Submit</FormButton>
+      </form>
+    </Card>
   );
 }
 
