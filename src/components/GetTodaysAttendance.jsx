@@ -24,7 +24,15 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { Edit2, Plus, Settings, Trash, Trash2 } from "react-feather";
+import {
+  Edit2,
+  Moon,
+  Plus,
+  Settings,
+  Table as TableIcon,
+  Trash,
+  Trash2,
+} from "react-feather";
 
 // const iconClasses = "text-default-200 pointer-events-none flex-shrink-0";
 const iconClasses = "";
@@ -228,12 +236,23 @@ function GetTodayAttendance({
           </span>
         </div>
         <div
-        //   style={{
-        //     display: "flex",
-        //     flexWrap: "wrap",
-        //     gap: "0.5em",
-        //   }}
+          className="flex flex-row gap-2"
+          //   style={{
+          //     display: "flex",
+          //     flexWrap: "wrap",
+          //     gap: "0.5em",
+          //   }}
         >
+          <Button
+            // isIconOnly
+            size="md"
+            variant="flat"
+            onClick={(e) => setShowTimeTable((prev) => !prev)}
+          >
+            <TableIcon />
+            {showTimeTable ? "Hide" : "Show"}
+            TimeTable
+          </Button>
           <Dropdown
             className="bg-foreground text-background"
             placement="bottom"
@@ -250,6 +269,19 @@ function GetTodayAttendance({
                 startContent={<Edit2 size="1.5em" className={iconClasses} />}
               >
                 Edit
+              </DropdownItem>
+              <DropdownItem
+                key="mode"
+                onClick={(e) => setEdit(true)}
+                startContent={
+                  "dark" ? (
+                    <Moon size="1.5em" className={iconClasses} />
+                  ) : (
+                    <Edit2 size="1.5em" className={iconClasses} />
+                  )
+                }
+              >
+                Dark mode
               </DropdownItem>
               <DropdownItem
                 key="clear"
@@ -313,6 +345,7 @@ function GetTodayAttendance({
 
           <div className="flex gap-4">
             <Table
+              className="w-full min-w-fit"
               sortDescriptor={{
                 direction: sortOrder === 1 ? "descending" : "ascending",
                 column: Object.keys(tableValues).indexOf(sortCol).toString(),
@@ -347,7 +380,7 @@ function GetTodayAttendance({
                         {subject.name}
                       </TableCell>
                       <TableCell>
-                        <div style={{ display: "flex", gap: "1em" }}>
+                        <div className="flex flex-row gap-2 justify-start">
                           <Button
                             variant={
                               days?.[todaysDate]?.[subject.id]?.present
@@ -433,12 +466,11 @@ function GetTodayAttendance({
                     </TableRow>
                   );
                 })}
-              </TableBody>
-              {/* <TableF>
-                <tr>
-                  <td />
-                  <td style={{ display: "flex", gap: "1em" }}>
-                    <button
+                <TableRow>
+                  <TableCell />
+                  <TableCell className="flex gap-2">
+                    <Button
+                      variant="flat"
                       onClick={(e) =>
                         setDays((prev) => ({
                           ...prev,
@@ -456,8 +488,9 @@ function GetTodayAttendance({
                       }
                     >
                       All present
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="flat"
                       onClick={(e) =>
                         setDays((prev) => ({
                           ...prev,
@@ -475,9 +508,17 @@ function GetTodayAttendance({
                       }
                     >
                       All Absent
-                    </button>
+                    </Button>
                   </TableCell>
-                </tr>
+                  <TableCell />
+                  <TableCell />
+                  <TableCell />
+                  <TableCell />
+                  <TableCell />
+                </TableRow>
+              </TableBody>
+              {/* <TableF>
+         
               </TableF> */}
             </Table>
 
