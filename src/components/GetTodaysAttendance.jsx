@@ -3,7 +3,6 @@ import { TimeTable } from "../App";
 import {
   Button,
   Card,
-  Checkbox,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -26,12 +25,12 @@ import {
 import { useStateContext } from "../context/stateContext";
 import Header from "./Header";
 import { Charts } from "./Charts";
+import { TableOptions } from "./TableOptions";
 
 const iconClasses = "";
 
 function GetTodayAttendance() {
-  const { showTimeTable, info, setInfo, days, setDays, todayDate } =
-    useStateContext();
+  const { showTimeTable, info, days, setDays, todayDate } = useStateContext();
 
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
@@ -142,36 +141,7 @@ function GetTodayAttendance() {
         </div>
       ) : (
         <Card className="p-4 mx-4 overflow-auto">
-          <div className="flex items-center mb-4">
-            <div>
-              <p className="text-xs">Showing attendance</p>
-              <span className="font-bold">{todayDateString}</span>
-            </div>
-            <div
-              style={{
-                marginLeft: "1em",
-                display: "flex",
-                gap: "4px",
-                alignItems: "baseline",
-              }}
-            >
-              <Checkbox
-                type="checkbox"
-                defaultSelected={!!info?.options?.showAllSubjects}
-                onChange={(e) =>
-                  setInfo((prev) => ({
-                    ...prev,
-                    options: {
-                      ...prev.options,
-                      showAllSubjects: e.target.checked,
-                    },
-                  }))
-                }
-              >
-                Show All Subjects
-              </Checkbox>
-            </div>
-          </div>
+          <TableOptions />
 
           <div className="flex gap-4">
             <Table
