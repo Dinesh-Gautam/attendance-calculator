@@ -1,12 +1,6 @@
-import React, { useMemo, useState } from "react";
-import { TimeTable } from "../App";
 import {
   Button,
   Card,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
   Table,
   TableBody,
   TableCell,
@@ -14,73 +8,59 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import {
-  Edit2,
-  Moon,
-  Settings,
-  Sun,
-  Table as TableIcon,
-  Trash,
-} from "react-feather";
+import React, { useMemo, useState } from "react";
+import { TimeTable } from "../App";
 import { useStateContext } from "../context/stateContext";
-import Header from "./Header";
 import { Charts } from "./Charts";
+import Header from "./Header";
 import { TableOptions } from "./TableOptions";
-
-const iconClasses = "";
 
 function GetTodayAttendance() {
   const { showTimeTable, info, days, setDays, todayDate } = useStateContext();
-
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
-
   const todayDateString = todayDate.toDateString();
+  const tableValues = info.subjects.reduce((acc, subject) => {
+    const subjectAttendance = days[todayDateString]?.[subject.id];
+    const present = subjectAttendance?.present
+      ? 2
+      : subjectAttendance?.absent
+      ? 1
+      : 0;
+    const subjectData = {
+      Subjects: { id: subject.id, values: [0, subject.name] },
+      "Today Attendance": { id: subject.id, values: [subject.name, present] },
+      Attended: {
+        id: subject.id,
+        values: [subject.name, getAttendedLectures(subject, days)],
+      },
+      Lectures: {
+        id: subject.id,
+        values: [subject.name, getTotalLectures(subject, days)],
+      },
+      Percentage: {
+        id: subject.id,
+        values: [subject.name, getAttendancePercentage(subject, days)],
+      },
+      "Required Lectures": {
+        id: subject.id,
+        values: [subject.name, getRequiredLectures(subject, days)],
+      },
+      "Allowed Holidays": {
+        id: subject.id,
+        values: [subject.name, getAllowedHolidays(subject, days)],
+      },
+    };
+    // Accumulate the data for each category
+    Object.keys(subjectData).forEach((key) => {
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(subjectData[key]);
+    });
 
-  const attendedLectures = info.subjects.map((subject) => ({
-    id: subject.id,
-    values: [subject.name, getAttendedLectures(subject, days)],
-  }));
-  const subjectsNames = info.subjects.map((subject) => ({
-    id: subject.id,
-    values: [0, subject.name],
-  }));
-  const lectures = info.subjects.map((subject) => ({
-    id: subject.id,
-    values: [subject.name, getTotalLectures(subject, days)],
-  }));
-  const attendedPercentage = info.subjects.map((subject) => ({
-    id: subject.id,
-    values: [subject.name, getAttendancePercentage(subject, days)],
-  }));
-  const requiredLectures = info.subjects.map((subject) => ({
-    id: subject.id,
-    values: [subject.name, getRequiredLectures(subject, days)],
-  }));
-  const allowedHolidays = info.subjects.map((subject) => ({
-    id: subject.id,
-    values: [subject.name, getAllowedHolidays(subject, days)],
-  }));
-  const todayAttendance = info.subjects.map((subject) => ({
-    id: subject.id,
-    values: [
-      subject.name,
-      days[todayDateString]?.[subject.id]?.present
-        ? 2
-        : days[todayDateString]?.[subject.id]?.absent
-        ? 1
-        : 0,
-    ],
-  }));
-  const tableValues = {
-    Subjects: subjectsNames,
-    "Today Attendance": todayAttendance,
-    Attended: attendedLectures,
-    Lectures: lectures,
-    Percentage: attendedPercentage,
-    "Required Lectures": requiredLectures,
-    "Allowed Holidays": allowedHolidays,
-  };
+    return acc;
+  }, {});
   const sortedData = useMemo(() => {
     if (!sortCol) return info.subjects;
     return [...tableValues[sortCol]]
@@ -98,6 +78,7 @@ function GetTodayAttendance() {
           : 0
       )
       .map(({ id }) => info.subjects.find((subject) => subject.id === id));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortCol, sortOrder, todayDateString, info.subjects]);
 
@@ -110,26 +91,14 @@ function GetTodayAttendance() {
     }
   }
 
-  function AllButtonClickHandler(type) {
-    setDays((prev) => ({
-      ...prev,
-      [todayDateString]: {
-        ...prev[todayDateString],
-        ...info.subjects.reduce((acc, subject) => {
-          if (
-            (!info?.options?.showAllSubjects &&
-              subject.lectures?.[todayDate.getDay()]) ||
-            info?.options?.showAllSubjects
-          ) {
-            acc[subject.id] = {
-              present: type === "present",
-              absent: type === "absent",
-            };
-          }
-          return acc;
-        }, {}),
-      },
-    }));
+  function getFilteredAndSortedTableValues() {
+    return !info?.options?.showAllSubjects
+      ? sortedData.filter((subject) =>
+          info?.subjects?.some(
+            (sub) => sub.id === subject.id && sub.lectures?.[todayDate.getDay()]
+          )
+        )
+      : sortedData;
   }
 
   return (
@@ -164,16 +133,7 @@ function GetTodayAttendance() {
                 })}
               </TableHeader>
               <TableBody emptyContent={"No Subjects to display."}>
-                {(!info?.options?.showAllSubjects
-                  ? sortedData.filter((subject) =>
-                      info?.subjects?.some(
-                        (sub) =>
-                          sub.id === subject.id &&
-                          sub.lectures?.[todayDate.getDay()]
-                      )
-                    )
-                  : sortedData
-                ).map((subject) => {
+                {getFilteredAndSortedTableValues().map((subject) => {
                   return (
                     <TableRow key={subject.id}>
                       <TableCell style={{ whiteSpace: "nowrap" }}>
@@ -181,63 +141,7 @@ function GetTodayAttendance() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-row gap-2 justify-start">
-                          <Button
-                            variant={
-                              days?.[todayDateString]?.[subject.id]?.present
-                                ? "shadow"
-                                : "bordered"
-                            }
-                            color={
-                              days?.[todayDateString]?.[subject.id]?.present
-                                ? "success"
-                                : "default"
-                            }
-                            onClick={(e) =>
-                              setDays((prev) => ({
-                                ...prev,
-                                [todayDateString]: {
-                                  ...prev[todayDateString],
-                                  [subject.id]: {
-                                    present:
-                                      !prev?.[todayDateString]?.[subject.id]
-                                        ?.present,
-
-                                    absent: false,
-                                  },
-                                },
-                              }))
-                            }
-                          >
-                            Present
-                          </Button>
-                          <Button
-                            variant={
-                              days?.[todayDateString]?.[subject.id]?.absent
-                                ? "shadow"
-                                : "bordered"
-                            }
-                            color={
-                              days?.[todayDateString]?.[subject.id]?.absent
-                                ? "danger"
-                                : "default"
-                            }
-                            onClick={(e) =>
-                              setDays((prev) => ({
-                                ...prev,
-                                [todayDateString]: {
-                                  ...prev[todayDateString],
-                                  [subject.id]: {
-                                    absent:
-                                      !prev?.[todayDateString]?.[subject.id]
-                                        ?.absent,
-                                    present: false,
-                                  },
-                                },
-                              }))
-                            }
-                          >
-                            Absent
-                          </Button>
+                          <AttendanceButtons subject={subject} />
                         </div>
                       </TableCell>
 
@@ -255,37 +159,18 @@ function GetTodayAttendance() {
                     </TableRow>
                   );
                 })}
-                {console.log(
-                  info.subjects.filter(
-                    (sub) => sub.lectures[todayDate.getDay()]
-                  )
-                )}
 
-                {(info?.options?.showAllSubjects ||
-                  info.subjects.filter(
-                    (sub) => sub.lectures[todayDate.getDay()]
-                  ).length > 0) && (
+                {shouldShowTableFooter(info, todayDate) && (
                   <TableRow>
-                    <TableCell />
-                    <TableCell className="flex gap-2">
-                      <Button
-                        variant="flat"
-                        onClick={(e) => AllButtonClickHandler("present")}
-                      >
-                        All present
-                      </Button>
-                      <Button
-                        variant="flat"
-                        onClick={(e) => AllButtonClickHandler("absent")}
-                      >
-                        All Absent
-                      </Button>
-                    </TableCell>
-                    <TableCell />
-                    <TableCell />
-                    <TableCell />
-                    <TableCell />
-                    <TableCell />
+                    {Object.values(tableValues).map((heading, index) => {
+                      return index !== 1 ? (
+                        <TableCell key={index} />
+                      ) : (
+                        <TableCell>
+                          <MarkAllAttendanceButtons />
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
                 )}
               </TableBody>
@@ -297,6 +182,86 @@ function GetTodayAttendance() {
       )}
     </div>
   );
+}
+function shouldShowTableFooter(info, todayDate) {
+  return (
+    info?.options?.showAllSubjects ||
+    info.subjects.filter((sub) => sub.lectures[todayDate.getDay()]).length > 0
+  );
+}
+function MarkAllAttendanceButtons() {
+  const { info, setDays, todayDate } = useStateContext();
+  const todayDateString = todayDate.toDateString();
+  function AllButtonClickHandler(type) {
+    setDays((prev) => ({
+      ...prev,
+      [todayDateString]: {
+        ...prev[todayDateString],
+        ...info.subjects.reduce((acc, subject) => {
+          if (
+            (!info?.options?.showAllSubjects &&
+              subject.lectures?.[todayDate.getDay()]) ||
+            info?.options?.showAllSubjects
+          ) {
+            acc[subject.id] = {
+              present: type === "present",
+              absent: type === "absent",
+            };
+          }
+          return acc;
+        }, {}),
+      },
+    }));
+  }
+  return (
+    <>
+      <Button variant="flat" onClick={(e) => AllButtonClickHandler("present")}>
+        All present
+      </Button>
+      <Button variant="flat" onClick={(e) => AllButtonClickHandler("absent")}>
+        All Absent
+      </Button>
+    </>
+  );
+}
+
+function AttendanceButtons({ subject }) {
+  const { days, setDays, todayDate } = useStateContext();
+  const todayDateString = todayDate.toDateString();
+
+  function attendanceButtonClickHandler(type, subject) {
+    setDays((prev) => ({
+      ...prev,
+      [todayDateString]: {
+        ...prev[todayDateString],
+        [subject.id]: {
+          present: type === "present",
+          absent: type === "absent",
+          [type]: !prev?.[todayDateString]?.[subject.id]?.[type],
+        },
+      },
+    }));
+  }
+  return ["present", "absent"].map((type) => {
+    return (
+      <Button
+        className="capitalize"
+        variant={
+          days?.[todayDateString]?.[subject.id]?.[type] ? "shadow" : "bordered"
+        }
+        color={
+          days?.[todayDateString]?.[subject.id]?.[type]
+            ? type === "absent"
+              ? "danger"
+              : "success"
+            : "default"
+        }
+        onClick={(e) => attendanceButtonClickHandler(type, subject)}
+      >
+        {type}
+      </Button>
+    );
+  });
 }
 
 function getTotalLectures(subject, days) {
