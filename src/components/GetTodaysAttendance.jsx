@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import Chart from "react-google-charts";
 import { TimeTable } from "../App";
 import {
   Button,
@@ -9,8 +8,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Select,
-  SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -28,6 +25,7 @@ import {
 } from "react-feather";
 import { useStateContext } from "../context/stateContext";
 import Header from "./Header";
+import { Charts } from "./Charts";
 
 const iconClasses = "";
 
@@ -37,8 +35,6 @@ function GetTodayAttendance() {
 
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
-
-  const [displayChart, setDisplayChart] = useState("Attended Lectures");
 
   const todayDateString = todayDate.toDateString();
 
@@ -115,91 +111,27 @@ function GetTodayAttendance() {
     }
   }
 
-  const chartAttendedLectures = [
-    ["Subjects", "Attended Lectures"],
-    ...attendedLectures.map((sub) => sub.values),
-  ];
-  const chartAttendanceRatio = [
-    ["Ratio", "Attendance"],
-    // get total present and absent and total number of lectures
-    [
-      "Total Present",
-
-      info.subjects
-        .map((subject) =>
-          Object.values(days)
-            .map((day) => {
-              return day[subject.id]?.present ? 1 : 0;
-            })
-            .reduce((a, b) => a + b, 0)
-        )
-        .reduce((a, b) => a + b, 0),
-    ],
-    [
-      "Total Absent",
-
-      info.subjects
-        .map((subject) =>
-          Object.values(days)
-            .map((day) => {
-              return day[subject.id]?.absent ? 1 : 0;
-            })
-            .reduce((a, b) => a + b, 0)
-        )
-        .reduce((a, b) => a + b, 0),
-    ],
-    [
-      "Lectures not taken",
-      info.subjects
-        .map((subject) =>
-          Object.values(days)
-            .map((day) => {
-              return !day[subject.id]?.absent && !day[subject.id]?.present
-                ? 1
-                : 0;
-            })
-            .reduce((a, b) => a + b, 0)
-        )
-        .reduce((a, b) => a + b, 0),
-    ],
-  ];
-
-  const commonOptions = {
-    legend: "none",
-    pieSliceText: "label",
-    backgroundColor: {
-      fill: "transparent",
-      stroke: "red",
-    },
-    chartArea: {
-      backgroundColor: "transparent",
-    },
-    titleTextStyle: {
-      color: "white",
-      fontName: "Inter",
-    },
-  };
-
-  const charts = {
-    "Attended Lectures": {
-      chartType: "PieChart",
-      data: chartAttendedLectures,
-      options: {
-        title: "Attended Lectures",
-
-        ...commonOptions,
+  function AllButtonClickHandler(type) {
+    setDays((prev) => ({
+      ...prev,
+      [todayDateString]: {
+        ...prev[todayDateString],
+        ...info.subjects.reduce((acc, subject) => {
+          if (
+            (!info?.options?.showAllSubjects &&
+              subject.lectures?.[todayDate.getDay()]) ||
+            info?.options?.showAllSubjects
+          ) {
+            acc[subject.id] = {
+              present: type === "present",
+              absent: type === "absent",
+            };
+          }
+          return acc;
+        }, {}),
       },
-    },
-    "Attendance Ratio": {
-      chartType: "PieChart",
-      data: chartAttendanceRatio,
-      options: {
-        title: "Attendance Ratio",
-
-        ...commonOptions,
-      },
-    },
-  };
+    }));
+  }
 
   return (
     <div>
@@ -368,53 +300,13 @@ function GetTodayAttendance() {
                     <TableCell className="flex gap-2">
                       <Button
                         variant="flat"
-                        onClick={(e) =>
-                          setDays((prev) => ({
-                            ...prev,
-                            [todayDateString]: {
-                              ...prev[todayDateString],
-                              ...info.subjects.reduce((acc, subject) => {
-                                if (
-                                  (!info?.options?.showAllSubjects &&
-                                    subject.lectures?.[todayDate.getDay()]) ||
-                                  info?.options?.showAllSubjects
-                                ) {
-                                  acc[subject.id] = {
-                                    present: true,
-                                    absent: false,
-                                  };
-                                }
-                                return acc;
-                              }, {}),
-                            },
-                          }))
-                        }
+                        onClick={(e) => AllButtonClickHandler("present")}
                       >
                         All present
                       </Button>
                       <Button
                         variant="flat"
-                        onClick={(e) =>
-                          setDays((prev) => ({
-                            ...prev,
-                            [todayDateString]: {
-                              ...prev[todayDateString],
-                              ...info.subjects.reduce((acc, subject) => {
-                                if (
-                                  (!info?.options?.showAllSubjects &&
-                                    subject.lectures?.[todayDate.getDay()]) ||
-                                  info?.options?.showAllSubjects
-                                ) {
-                                  acc[subject.id] = {
-                                    present: false,
-                                    absent: true,
-                                  };
-                                }
-                                return acc;
-                              }, {}),
-                            },
-                          }))
-                        }
+                        onClick={(e) => AllButtonClickHandler("absent")}
                       >
                         All Absent
                       </Button>
@@ -429,35 +321,7 @@ function GetTodayAttendance() {
               </TableBody>
             </Table>
 
-            <Card className="p-4 w-max flex flex-col gap-4 flex-nowrap min-w-fit shadow-small">
-              <Select
-                classNames={{
-                  popoverContent: "bg-default-800 text-background",
-                }}
-                size="sm"
-                className="w-full mw-max"
-                label="Select chart type"
-                selectedKeys={[displayChart]}
-                onChange={(e) =>
-                  e.target.value && setDisplayChart((prev) => e.target.value)
-                }
-              >
-                {Object.keys(charts).map((val, index) => (
-                  <SelectItem variant="faded" key={val} value={val}>
-                    {val}
-                  </SelectItem>
-                ))}
-              </Select>
-              <div className="w-max">
-                <Chart
-                  chartType="PieChart"
-                  data={charts[displayChart].data}
-                  options={charts[displayChart].options}
-                  width={"100%"}
-                  height={"400px"}
-                />
-              </div>
-            </Card>
+            <Charts />
           </div>
         </Card>
       )}
@@ -473,7 +337,7 @@ function getTotalLectures(subject, days) {
   }, 0);
 }
 
-function getAttendedLectures(subject, days) {
+export function getAttendedLectures(subject, days) {
   return Object.values(days).reduce((total, day) => {
     return total + (day[subject.id]?.present ? 1 : 0);
   }, 0);
