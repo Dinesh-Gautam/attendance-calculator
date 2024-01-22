@@ -130,14 +130,14 @@ function getPresentRatioColor(presentRatio) {
   } / ${Math.min(Math.abs(presentRatio / 100 - 0.75) + 0.75, 1) - 0.35})`;
 }
 
-export function getNoOfWeeks(subjects) {
+function getNoOfWeeks(subjects) {
   const max = Math.max(
     ...subjects.map((subject) => Math.max(...Object.keys(subject.lectures)))
   );
   return max;
 }
 
-export function getMaxEndTimeOfSubjects(subjects) {
+function getMaxEndTimeOfSubjects(subjects) {
   return subjects.reduce((maxEndTime, subject) => {
     for (const lectureArray of Object.values(subject.lectures)) {
       const maxLectureEndTime = lectureArray.reduce((currentMax, lecture) => {
@@ -149,7 +149,7 @@ export function getMaxEndTimeOfSubjects(subjects) {
   }, 0);
 }
 
-export function getMinStartTimeOfSubjects(subjects) {
+function getMinStartTimeOfSubjects(subjects) {
   return subjects.reduce((minStartTime, subject) => {
     for (const lectureArray of Object.values(subject.lectures)) {
       const minLectureStartTime = lectureArray.reduce((currentMin, lecture) => {

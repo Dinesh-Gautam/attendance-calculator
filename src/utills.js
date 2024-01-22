@@ -10,3 +10,12 @@ export function getWeekName(weekNo) {
   ];
   return weekNames[weekNo];
 }
+export function isAllDataInserted(info) {
+  return (
+    info.className &&
+    info.startDate &&
+    info.endDate &&
+    info.subjects &&
+    info.timeTable
+  );
+}
