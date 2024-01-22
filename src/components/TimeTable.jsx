@@ -1,10 +1,5 @@
 import { Card } from "@nextui-org/card";
-import {
-  getNoOfWeeks,
-  getWeekName,
-  getMaxEndTimeOfSubjects,
-  getMinStartTimeOfSubjects,
-} from "../App";
+import { getWeekName } from "../utills";
 
 export function TimeTable({ days, info }) {
   const subjects = info.timeTable;
@@ -133,4 +128,35 @@ function getPresentRatioColor(presentRatio) {
   return `hsl(${
     presentRatio <= 75 ? "var(--nextui-danger)" : "var(--nextui-success)"
   } / ${Math.min(Math.abs(presentRatio / 100 - 0.75) + 0.75, 1) - 0.35})`;
+}
+
+export function getNoOfWeeks(subjects) {
+  const max = Math.max(
+    ...subjects.map((subject) => Math.max(...Object.keys(subject.lectures)))
+  );
+  return max;
+}
+
+export function getMaxEndTimeOfSubjects(subjects) {
+  return subjects.reduce((maxEndTime, subject) => {
+    for (const lectureArray of Object.values(subject.lectures)) {
+      const maxLectureEndTime = lectureArray.reduce((currentMax, lecture) => {
+        return Math.max(currentMax, lecture.endTime);
+      }, 0);
+      maxEndTime = Math.max(maxEndTime, maxLectureEndTime);
+    }
+    return maxEndTime;
+  }, 0);
+}
+
+export function getMinStartTimeOfSubjects(subjects) {
+  return subjects.reduce((minStartTime, subject) => {
+    for (const lectureArray of Object.values(subject.lectures)) {
+      const minLectureStartTime = lectureArray.reduce((currentMin, lecture) => {
+        return Math.min(currentMin, lecture.startTime);
+      }, minStartTime);
+      minStartTime = Math.min(minStartTime, minLectureStartTime);
+    }
+    return minStartTime;
+  }, Infinity);
 }
