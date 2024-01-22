@@ -9,14 +9,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Listbox,
-  ListboxItem,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectItem,
-  SelectSection,
   Table,
   TableBody,
   TableCell,
@@ -27,37 +21,30 @@ import {
 import {
   Edit2,
   Moon,
-  Plus,
   Settings,
+  Sun,
   Table as TableIcon,
   Trash,
-  Trash2,
 } from "react-feather";
+import { useStateContext } from "../context/stateContext";
+import Header from "./Header";
 
-// const iconClasses = "text-default-200 pointer-events-none flex-shrink-0";
 const iconClasses = "";
 
-function GetTodayAttendance({
-  info,
-  setInfo,
-  days,
-  setDays,
-  todayDate,
-  originalDate,
-  setEdit,
-  toggleTheme,
-}) {
-  const [showTimeTable, setShowTimeTable] = useState(false);
+function GetTodayAttendance() {
+  const { showTimeTable, info, setInfo, days, setDays, todayDate } =
+    useStateContext();
+
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
 
   const [displayChart, setDisplayChart] = useState("Attended Lectures");
 
-  const todaysDate = todayDate.toDateString();
+  const todayDateString = todayDate.toDateString();
 
   const attendedLectures = info.subjects.map((subject) => ({
     id: subject.id,
-    values: [subject.name, getAttendedLecturesNumber(subject, days)],
+    values: [subject.name, getAttendedLectures(subject, days)],
   }));
   const subjectsNames = info.subjects.map((subject) => ({
     id: subject.id,
@@ -65,11 +52,11 @@ function GetTodayAttendance({
   }));
   const lectures = info.subjects.map((subject) => ({
     id: subject.id,
-    values: [subject.name, getTotalLecturesNumber(subject, days)],
+    values: [subject.name, getTotalLectures(subject, days)],
   }));
   const attendedPercentage = info.subjects.map((subject) => ({
     id: subject.id,
-    values: [subject.name, getAttendedLecturesPercentage(subject, days)],
+    values: [subject.name, getAttendancePercentage(subject, days)],
   }));
   const requiredLectures = info.subjects.map((subject) => ({
     id: subject.id,
@@ -83,9 +70,9 @@ function GetTodayAttendance({
     id: subject.id,
     values: [
       subject.name,
-      days[todaysDate]?.[subject.id]?.present
+      days[todayDateString]?.[subject.id]?.present
         ? 2
-        : days[todaysDate]?.[subject.id]?.absent
+        : days[todayDateString]?.[subject.id]?.absent
         ? 1
         : 0,
     ],
@@ -117,7 +104,7 @@ function GetTodayAttendance({
       )
       .map(({ id }) => info.subjects.find((subject) => subject.id === id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortCol, sortOrder, todaysDate, info.subjects]);
+  }, [sortCol, sortOrder, todayDateString, info.subjects]);
 
   function headingClickHandler(value) {
     if (value === sortCol) {
@@ -216,90 +203,7 @@ function GetTodayAttendance({
 
   return (
     <div>
-      <div className="flex flex-row gap-2 flex-wrap p-4 pb-4 items-center md:justify-between">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            flexDirection: "column",
-          }}
-        >
-          <span className="text-xs">Today's Date </span>
-          <span style={{ fontWeight: "bold" }}>
-            {originalDate.toDateString()}
-          </span>
-        </div>
-        <div
-          className="flex flex-row gap-2"
-          //   style={{
-          //     display: "flex",
-          //     flexWrap: "wrap",
-          //     gap: "0.5em",
-          //   }}
-        >
-          <Button
-            // isIconOnly
-            size="md"
-            variant="flat"
-            onClick={(e) => setShowTimeTable((prev) => !prev)}
-          >
-            <TableIcon />
-            <span>{showTimeTable ? "Hide " : "Show "}</span>
-            <span>Timetable</span>
-          </Button>
-          <Dropdown
-            className="bg-foreground text-background"
-            placement="bottom"
-          >
-            <DropdownTrigger>
-              <Button isIconOnly size="md" variant="light">
-                <Settings />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem
-                key="edit"
-                onClick={(e) => setEdit(true)}
-                startContent={<Edit2 size="1.5em" className={iconClasses} />}
-              >
-                Edit
-              </DropdownItem>
-              <DropdownItem
-                key="mode"
-                onClick={toggleTheme}
-                startContent={
-                  "dark" ? (
-                    <Moon size="1.5em" className={iconClasses} />
-                  ) : (
-                    <Edit2 size="1.5em" className={iconClasses} />
-                  )
-                }
-              >
-                Dark mode
-              </DropdownItem>
-              <DropdownItem
-                key="clear"
-                className="text-danger"
-                color="danger"
-                startContent={<Trash size="1.5em" className={iconClasses} />}
-                onClick={(e) =>
-                  window.confirm(
-                    "Are you sure you want to delete all of the data?"
-                  ) && setDays({})
-                }
-              >
-                Clear Data
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-
-          {/* <button onClick={(e) => setEdit(true)}>Edit</button>
-          <button onClick={(e) => setShowTimeTable((prev) => !prev)}>
-            {showTimeTable ? "Hide" : "Show"}
-            TimeTable
-                </button> */}
-        </div>
-      </div>
+      <Header />
       {showTimeTable ? (
         <div className="attendance-table">
           <TimeTable days={days} info={info} />
@@ -309,7 +213,7 @@ function GetTodayAttendance({
           <div className="flex items-center mb-4">
             <div>
               <p className="text-xs">Showing attendance</p>
-              <span className="font-bold">{todaysDate}</span>
+              <span className="font-bold">{todayDateString}</span>
             </div>
             <div
               style={{
@@ -377,30 +281,23 @@ function GetTodayAttendance({
                         <div className="flex flex-row gap-2 justify-start">
                           <Button
                             variant={
-                              days?.[todaysDate]?.[subject.id]?.present
+                              days?.[todayDateString]?.[subject.id]?.present
                                 ? "shadow"
                                 : "bordered"
                             }
                             color={
-                              days?.[todaysDate]?.[subject.id]?.present
+                              days?.[todayDateString]?.[subject.id]?.present
                                 ? "success"
                                 : "default"
                             }
-                            // style={
-                            //   days?.[todaysDate]?.[subject.id]?.present
-                            //     ? {
-                            //         backgroundColor: "rgba(0,255,0,0.1)",
-                            //       }
-                            //     : {}
-                            // }
                             onClick={(e) =>
                               setDays((prev) => ({
                                 ...prev,
-                                [todaysDate]: {
-                                  ...prev[todaysDate],
+                                [todayDateString]: {
+                                  ...prev[todayDateString],
                                   [subject.id]: {
                                     present:
-                                      !prev?.[todaysDate]?.[subject.id]
+                                      !prev?.[todayDateString]?.[subject.id]
                                         ?.present,
 
                                     absent: false,
@@ -413,23 +310,24 @@ function GetTodayAttendance({
                           </Button>
                           <Button
                             variant={
-                              days?.[todaysDate]?.[subject.id]?.absent
+                              days?.[todayDateString]?.[subject.id]?.absent
                                 ? "shadow"
                                 : "bordered"
                             }
                             color={
-                              days?.[todaysDate]?.[subject.id]?.absent
+                              days?.[todayDateString]?.[subject.id]?.absent
                                 ? "danger"
                                 : "default"
                             }
                             onClick={(e) =>
                               setDays((prev) => ({
                                 ...prev,
-                                [todaysDate]: {
-                                  ...prev[todaysDate],
+                                [todayDateString]: {
+                                  ...prev[todayDateString],
                                   [subject.id]: {
                                     absent:
-                                      !prev?.[todaysDate]?.[subject.id]?.absent,
+                                      !prev?.[todayDateString]?.[subject.id]
+                                        ?.absent,
                                     present: false,
                                   },
                                 },
@@ -442,16 +340,11 @@ function GetTodayAttendance({
                       </TableCell>
 
                       <TableCell>
-                        {getAttendedLecturesNumber(subject, days)}
+                        {getAttendedLectures(subject, days)}
                       </TableCell>
+                      <TableCell>{getTotalLectures(subject, days)}</TableCell>
                       <TableCell>
-                        {getTotalLecturesNumber(subject, days)}
-                      </TableCell>
-                      <TableCell>
-                        {getAttendedLecturesPercentage(subject, days).toFixed(
-                          1
-                        )}
-                        %
+                        {getAttendancePercentage(subject, days).toFixed(1)}%
                       </TableCell>
                       <TableCell>
                         {getRequiredLectures(subject, days)}
@@ -478,8 +371,8 @@ function GetTodayAttendance({
                         onClick={(e) =>
                           setDays((prev) => ({
                             ...prev,
-                            [todaysDate]: {
-                              ...prev[todaysDate],
+                            [todayDateString]: {
+                              ...prev[todayDateString],
                               ...info.subjects.reduce((acc, subject) => {
                                 if (
                                   (!info?.options?.showAllSubjects &&
@@ -504,8 +397,8 @@ function GetTodayAttendance({
                         onClick={(e) =>
                           setDays((prev) => ({
                             ...prev,
-                            [todaysDate]: {
-                              ...prev[todaysDate],
+                            [todayDateString]: {
+                              ...prev[todayDateString],
                               ...info.subjects.reduce((acc, subject) => {
                                 if (
                                   (!info?.options?.showAllSubjects &&
@@ -534,20 +427,9 @@ function GetTodayAttendance({
                   </TableRow>
                 )}
               </TableBody>
-              {/* <TableF>
-         
-              </TableF> */}
             </Table>
 
-            <Card
-              className="p-4 w-max flex flex-col gap-4 flex-nowrap min-w-fit shadow-small"
-              //   style={{
-              //     display: "flex",
-              //     flexDirection: "column",
-              //     alignItems: "flex-start",
-              //     flex: 1,
-              //   }}
-            >
+            <Card className="p-4 w-max flex flex-col gap-4 flex-nowrap min-w-fit shadow-small">
               <Select
                 classNames={{
                   popoverContent: "bg-default-800 text-background",
@@ -583,50 +465,47 @@ function GetTodayAttendance({
   );
 }
 
-function getTotalLecturesNumber(subject, days) {
-  days = Object.values(days);
-  const totalLectures = days.map((day) => {
-    return day[subject.id]?.present || day[subject.id]?.absent ? 1 : 0;
-  });
-  return totalLectures.reduce((a, b) => a + b, 0);
+function getTotalLectures(subject, days) {
+  return Object.values(days).reduce((total, day) => {
+    return (
+      total + (day[subject.id]?.present || day[subject.id]?.absent ? 1 : 0)
+    );
+  }, 0);
 }
-function getAttendedLecturesNumber(subject, days) {
-  days = Object.values(days);
-  const totalLectures = days.map((day) => {
-    return day[subject.id]?.present ? 1 : 0;
-  });
-  return totalLectures.reduce((a, b) => a + b, 0);
+
+function getAttendedLectures(subject, days) {
+  return Object.values(days).reduce((total, day) => {
+    return total + (day[subject.id]?.present ? 1 : 0);
+  }, 0);
 }
-function getAttendedLecturesPercentage(subject, days) {
-  const totalLectures = getTotalLecturesNumber(subject, days);
-  const attendedLectures = getAttendedLecturesNumber(subject, days);
-  return (attendedLectures / totalLectures) * 100;
+
+function getAttendancePercentage(subject, days) {
+  const total = getTotalLectures(subject, days);
+  const attended = getAttendedLectures(subject, days);
+  return total > 0 ? (attended / total) * 100 : 0;
 }
+
 function getRequiredLectures(subject, days) {
-  let attendedLectures = getAttendedLecturesNumber(subject, days);
-  let totalLectures = getTotalLecturesNumber(subject, days);
+  const total = getTotalLectures(subject, days);
+  const attended = getAttendedLectures(subject, days);
 
-  let requiredLectures = Math.ceil(
-    (0.75 * totalLectures - attendedLectures) / (1 - 0.75)
-  );
-
-  return Math.max(requiredLectures, 0);
+  const required = Math.ceil((0.75 * total - attended) / (1 - 0.75));
+  return Math.max(required, 0);
 }
 
 function getAllowedHolidays(subject, days) {
-  let totalLectures = getTotalLecturesNumber(subject, days);
-  let attendedLectures = getAttendedLecturesNumber(subject, days);
+  const total = getTotalLectures(subject, days);
+  const attended = getAttendedLectures(subject, days);
 
-  // calculate the number of allowed holidays by still maintaining 75% attendance
+  let allowed = 0;
+  let percentage = (attended / (total + allowed)) * 100;
 
-  let allowedHolidays = 0;
-  let percentage = (attendedLectures / totalLectures) * 100;
   while (percentage >= 75) {
-    allowedHolidays += 1;
-    totalLectures += 1;
-    percentage = (attendedLectures / totalLectures) * 100;
+    allowed++;
+    percentage = (attended / (total + allowed)) * 100;
   }
 
-  return Math.max(allowedHolidays - 1, 0);
+  return Math.max(allowed - 1, 0);
 }
+
 export default GetTodayAttendance;

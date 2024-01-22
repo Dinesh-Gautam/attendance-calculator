@@ -15,6 +15,9 @@ main {
 .timetable th , .timetable tbody tr td:first-child {
     /* background : rgba(0,0,0,0.05); */
     vertical-align: middle !important;
+    background : hsl(var(--nextui-background) / 0.2);
+    border-radius: var(--nextui-radius-small);
+    
 }
 
 .timetable tbody td{

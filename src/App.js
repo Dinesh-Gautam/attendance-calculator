@@ -5,6 +5,7 @@ import GetTodayAttendance from "./components/GetTodaysAttendance";
 import { Card } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
 import { Input, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
+import { useStateContext } from "./context/stateContext";
 
 const subjects = [
   {
@@ -320,32 +321,17 @@ function getMinStartTimeOfSubjects(subjects) {
 }
 
 function App({ toggleTheme }) {
-  const [info, setInfo] = useState(null);
-  const [days, setDays] = useState(null);
-  const [edit, setEdit] = useState(false);
-  const originalDate = new Date();
-
-  const [todayDate, setToDayDate] = useState(originalDate);
-  useEffect(() => {
-    // get info from localStorage
-    const info = JSON.parse(localStorage.getItem("info"));
-    const days = JSON.parse(localStorage.getItem("days"));
-    console.log(info);
-    setInfo(info || {});
-    setDays(days || {});
-  }, []);
-
-  useEffect(() => {
-    // save info to local storage
-    if (!info) return;
-    localStorage.setItem("info", JSON.stringify(info));
-  }, [info]);
-
-  useEffect(() => {
-    // save info to local storage
-    if (!days) return;
-    localStorage.setItem("days", JSON.stringify(days));
-  }, [days]);
+  const {
+    days,
+    setDays,
+    info,
+    setInfo,
+    edit,
+    setEdit,
+    originalDate,
+    todayDate,
+    setToDayDate,
+  } = useStateContext();
 
   return (
     info !== null && (
