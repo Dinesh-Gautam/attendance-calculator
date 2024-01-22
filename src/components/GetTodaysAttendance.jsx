@@ -9,14 +9,14 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import React, { useMemo, useState } from "react";
-import { TimeTable } from "../App";
 import { useStateContext } from "../context/stateContext";
 import { Charts } from "./Charts";
 import Header from "./Header";
 import { TableOptions } from "./TableOptions";
+import { TimeTable } from "./TimeTable";
 
 function GetTodayAttendance() {
-  const { showTimeTable, info, days, setDays, todayDate } = useStateContext();
+  const { showTimeTable, info, days, todayDate } = useStateContext();
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const todayDateString = todayDate.toDateString();
@@ -166,7 +166,7 @@ function GetTodayAttendance() {
                       return index !== 1 ? (
                         <TableCell key={index} />
                       ) : (
-                        <TableCell>
+                        <TableCell key={index}>
                           <MarkAllAttendanceButtons />
                         </TableCell>
                       );
@@ -245,6 +245,7 @@ function AttendanceButtons({ subject }) {
   return ["present", "absent"].map((type) => {
     return (
       <Button
+        key={type}
         className="capitalize"
         variant={
           days?.[todayDateString]?.[subject.id]?.[type] ? "shadow" : "bordered"

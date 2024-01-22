@@ -112,163 +112,7 @@ const subjects = [
   },
 ];
 
-export function TimeTable({ days, info }) {
-  const subjects = info.timeTable;
-  return (
-    <Card className="mx-4 p-4 flex flex-row justify-center overflow-auto min-w-fit">
-      <table className="timetable" borderSpacing="1">
-        <thead>
-          <tr>
-            <td />
-            {Array.from({ length: getNoOfWeeks(subjects) }).map((_, weekNo) => {
-              return <th>{getWeekName(weekNo + 1)}</th>;
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {Array.from({
-            length:
-              getMaxEndTimeOfSubjects(subjects) -
-              getMinStartTimeOfSubjects(subjects),
-          }).map((_, time) => {
-            return (
-              <tr>
-                <th>
-                  <span>
-                    {formatTimeTo12HourFormat(
-                      time + getMinStartTimeOfSubjects(subjects)
-                    )}
-                  </span>
-                  -
-                  <span>
-                    {formatTimeTo12HourFormat(
-                      time + 1 + getMinStartTimeOfSubjects(subjects)
-                    )}
-                  </span>
-                </th>
-                {Array.from({ length: getNoOfWeeks(subjects) }).map(
-                  (_, weekNo) => {
-                    const subject = getSubjectAtTime(
-                      subjects,
-                      time + getMinStartTimeOfSubjects(subjects),
-                      weekNo
-                    );
-                    const prevSubject = findSubjectWhosEndTimeIsBeforeTime(
-                      subjects,
-                      time + getMinStartTimeOfSubjects(subjects),
-                      weekNo
-                    );
-
-                    if (!subject && prevSubject) return null;
-                    if (!subject) return <td />;
-                    console.log(subject);
-                    const presentRatio = getSubjectPresentRatio(
-                      subject.id,
-                      days
-                    );
-                    return (
-                      <td
-                        style={{
-                          // backgroundColor: `hsl(${
-                          //   presentRatio <= 75 ? 75 - presentRatio + 75 : 0
-                          // }%,${presentRatio > 75 ? presentRatio : 0}%,0%, ${
-                          //   isNaN(presentRatio) ? "0" : "0.15"
-                          // })`,
-
-                          backgroundColor: `hsl(${
-                            presentRatio <= 75
-                              ? "var(--nextui-danger)"
-                              : "var(--nextui-success)"
-                          } / ${
-                            Math.min(
-                              Math.abs(presentRatio / 100 - 0.75) + 0.75,
-                              1
-                            ) - 0.35
-                          })`,
-                        }}
-                        rowSpan={subject.endTime - subject.startTime}
-                      >
-                        {subject.subjectName}
-                        {!isNaN(presentRatio) && (
-                          <span
-                            style={{ fontSize: "0.8em", marginLeft: "auto" }}
-                          >
-                            {presentRatio.toFixed(0)}%
-                          </span>
-                        )}
-                      </td>
-                    );
-                  }
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </Card>
-  );
-}
-
-function getSubjectPresentRatio(subjectId, days, att) {
-  days = Object.values(days)
-    .map((day) => Object.entries(day))
-    .flat();
-  console.log(days);
-  const totalPresent = days
-    ?.filter(([subId, att]) => att?.present && +subId === subjectId)
-    .reduce((a) => a + 1, 0);
-  const totalAbsent = days
-    ?.filter(([subId, att]) => att?.absent && +subId === subjectId)
-    .reduce((a) => a + 1, 0);
-  const total = totalPresent + totalAbsent;
-
-  const colorValue = (totalPresent / total) * 100;
-  console.log(colorValue);
-  return colorValue;
-}
-function formatTimeTo12HourFormat(twentyFourHourTime) {
-  const hour = twentyFourHourTime % 12 || 12;
-  const suffix = twentyFourHourTime < 12 ? "AM" : "PM";
-  return (
-    <>
-      <span>{hour}</span>
-      <span className="timeSuffix">{suffix}</span>
-    </>
-  );
-}
-
-function findSubjectWhosEndTimeIsBeforeTime(subjects, time, weekNo) {
-  for (let subject of subjects) {
-    for (let week of Object.keys(subject.lectures)) {
-      if (weekNo + 1 === +week) {
-        for (let lecture of subject.lectures[week]) {
-          if (time < lecture.endTime && time > lecture.startTime) {
-            return { ...lecture, subjectName: subject.name };
-          }
-        }
-      }
-    }
-  }
-  return null;
-}
-
-function getSubjectAtTime(subjects, time, weekNo) {
-  for (let subject of subjects) {
-    for (let week of Object.keys(subject.lectures)) {
-      if (weekNo + 1 === +week) {
-        for (let lecture of subject.lectures[week]) {
-          console.log(time, lecture.startTime);
-          if (!time || time === lecture.startTime) {
-            return { ...lecture, subjectName: subject.name, id: subject.id };
-          }
-        }
-      }
-    }
-  }
-  return null;
-}
-
-function getWeekName(weekNo) {
+export function getWeekName(weekNo) {
   const weekNames = [
     "Sunday",
     "Monday",
@@ -281,7 +125,7 @@ function getWeekName(weekNo) {
   return weekNames[weekNo];
 }
 
-function getNoOfWeeks(subjects) {
+export function getNoOfWeeks(subjects) {
   let max = 0;
   for (let subject of subjects) {
     for (let week of Object.keys(subject.lectures)) {
@@ -293,7 +137,7 @@ function getNoOfWeeks(subjects) {
   return max;
 }
 
-function getMaxEndTimeOfSubjects(subjects) {
+export function getMaxEndTimeOfSubjects(subjects) {
   let max = 0;
   for (let subject of subjects) {
     for (let week of Object.keys(subject.lectures)) {
@@ -306,7 +150,7 @@ function getMaxEndTimeOfSubjects(subjects) {
   }
   return max;
 }
-function getMinStartTimeOfSubjects(subjects) {
+export function getMinStartTimeOfSubjects(subjects) {
   let min = 100;
   for (let subject of subjects) {
     for (let week of Object.keys(subject.lectures)) {
