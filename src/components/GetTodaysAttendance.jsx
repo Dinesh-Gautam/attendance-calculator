@@ -140,7 +140,7 @@ function GetTodayAttendance() {
                         {subject.name}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-row gap-2 justify-start">
+                        <div className="flex flex-row gap-2 justify-center">
                           <AttendanceButtons subject={subject} />
                         </div>
                       </TableCell>
@@ -214,14 +214,14 @@ function MarkAllAttendanceButtons() {
     }));
   }
   return (
-    <>
+    <div className="flex flex-row gap-2 justify-center">
       <Button variant="flat" onClick={(e) => AllButtonClickHandler("present")}>
         All present
       </Button>
       <Button variant="flat" onClick={(e) => AllButtonClickHandler("absent")}>
         All Absent
       </Button>
-    </>
+    </div>
   );
 }
 
