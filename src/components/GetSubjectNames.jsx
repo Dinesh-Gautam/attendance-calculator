@@ -1,34 +1,11 @@
-import { useState } from "react";
-import { subjects } from "../config";
-import { Form } from "./Forms";
-import { FormInput, FormButton } from "./Forms";
-import { useStateContext } from "../context/stateContext";
+import { Form, FormInput } from "./Forms";
 
-export function GetSubjectNames() {
-  const { info, setInfo } = useStateContext();
-
-  const [value, setValue] = useState(
-    info?.subjects?.map((s) => s.name).join(",") ||
-      [...subjects]
-        .sort((a, b) => a.id - b.id)
-        .map((s) => s.name)
-        .join(",") ||
-      ""
-  );
+export function GetSubjectNames({
+  subjectNamesValue: value,
+  setSubjectNamesValue: setValue,
+}) {
   return (
-    <Form
-      onSubmit={(e) => {
-        e.preventDefault();
-        setInfo({
-          ...info,
-          subjects: value.split(",").map((s, index) => ({
-            name: s.trim(),
-            id: Math.max(...(subjects.map((sub) => sub.id) || [] || 0)) + index,
-            ...(subjects.find((sub) => sub.name === s.trim()) || {}),
-          })),
-        });
-      }}
-    >
+    <Form>
       <FormInput
         label="Subjects"
         id="subjectsInput"
@@ -36,7 +13,7 @@ export function GetSubjectNames() {
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      <FormButton type="submit">Submit</FormButton>
+      {/* <FormButton type="submit">Submit</FormButton> */}
     </Form>
   );
 }

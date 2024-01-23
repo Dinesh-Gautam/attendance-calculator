@@ -1,22 +1,11 @@
-import { useState } from "react";
-import { Form } from "./Forms";
-import { FormInput, FormButton } from "./Forms";
-import { useStateContext } from "../context/stateContext";
+import { Form, FormInput } from "./Forms";
 
-export function GetStartAndEndDate() {
-  const { info, setInfo } = useStateContext();
-
-  const [value, setValue] = useState({
-    startDate: info?.startDate || "",
-    endDate: info?.endDate || "",
-  });
+export function GetStartAndEndDate({
+  datesValue: value,
+  setDatesValue: setValue,
+}) {
   return (
-    <Form
-      onSubmit={(e) => {
-        e.preventDefault();
-        setInfo({ ...info, ...value });
-      }}
-    >
+    <Form>
       <FormInput
         label="Start Date"
         id="startDateInput"
@@ -38,7 +27,7 @@ export function GetStartAndEndDate() {
           setValue((prev) => ({ ...prev, endDate: e.target.value }))
         }
       />
-      <FormButton type="submit">Submit</FormButton>
+      {/* <FormButton type="submit">Submit</FormButton> */}
     </Form>
   );
 }

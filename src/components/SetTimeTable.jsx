@@ -1,14 +1,12 @@
 import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
 import { Input, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
-import { useMemo, useState } from "react";
-import { subjects } from "../config";
-import { getWeekName } from "../utils";
-import { FormButton } from "./Forms";
-import { useStateContext } from "../context/stateContext";
 import { Plus, X } from "react-feather";
+import { noOfDays, subjects } from "../config";
+import { useStateContext } from "../context/stateContext";
+import { getWeekName } from "../utils";
 
-function convertDefaultSubjectsToSubjectsValues(info, noOfDays) {
+export function convertDefaultSubjectsToSubjectsValues(info, noOfDays) {
   const defaultSubjects = info?.timeTable || subjects;
   const subjectsValues = {};
 
@@ -33,7 +31,10 @@ function convertDefaultSubjectsToSubjectsValues(info, noOfDays) {
   }
   return subjectsValues;
 }
-function convertSubjectValuesToDefaultSubjectsValues(info, subjectsValues) {
+export function convertSubjectValuesToDefaultSubjectsValues(
+  info,
+  subjectsValues
+) {
   const days = Object.keys(subjectsValues);
 
   const res = info.subjects.map((sub) => {
@@ -60,14 +61,7 @@ function convertSubjectValuesToDefaultSubjectsValues(info, subjectsValues) {
   return res;
 }
 
-export function SetTimeTable() {
-  const { info, setInfo } = useStateContext();
-  const noOfDays = 5;
-
-  const [subjectsValues, setSubjectsValues] = useState(
-    convertDefaultSubjectsToSubjectsValues(info, noOfDays)
-  );
-
+export function SetTimeTable({ subjectsValues, setSubjectsValues }) {
   function onChangeHandler(value, day, index, key) {
     setSubjectsValues((prev) => ({
       ...prev,
@@ -77,21 +71,9 @@ export function SetTimeTable() {
     }));
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    setInfo((prev) => ({
-      ...prev,
-      timeTable: convertSubjectValuesToDefaultSubjectsValues(
-        info,
-        subjectsValues
-      ),
-    }));
-  }
-
   return (
     <Card className="p-4 w-full mb-20">
-      <form className="max-w-full w-full" onSubmit={handleSubmit}>
+      <form className="max-w-full w-full">
         {Array.from({ length: noOfDays }).map((_, day) => (
           <DayKey
             key={day + 1}
@@ -102,7 +84,7 @@ export function SetTimeTable() {
           />
         ))}
 
-        <FormButton type="submit">Submit</FormButton>
+        {/* <FormButton type="submit">Submit</FormButton> */}
       </form>
     </Card>
   );

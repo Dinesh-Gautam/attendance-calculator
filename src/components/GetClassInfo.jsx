@@ -1,18 +1,11 @@
-import { useState } from "react";
-import { Form } from "./Forms";
-import { FormInput, FormButton } from "./Forms";
-import { useStateContext } from "../context/stateContext";
+import { Form, FormInput } from "./Forms";
 
-export function GetClassInfo() {
-  const { info, setInfo } = useStateContext();
-  const [value, setValue] = useState(info?.className || "");
+export function GetClassInfo({
+  classNameVale: value,
+  setClassNameValue: setValue,
+}) {
   return (
-    <Form
-      onSubmit={(e) => {
-        e.preventDefault();
-        setInfo({ ...info, className: value });
-      }}
-    >
+    <Form>
       <FormInput
         placeholder="1CE12"
         id="classNameInput"
@@ -21,7 +14,7 @@ export function GetClassInfo() {
         label="Class Name"
       />
 
-      <FormButton>Submit</FormButton>
+      {/* <FormButton>Submit</FormButton> */}
     </Form>
   );
 }

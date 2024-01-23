@@ -102,3 +102,5 @@ export const subjects = [
     },
   },
 ];
+
+export const noOfDays = 5;
