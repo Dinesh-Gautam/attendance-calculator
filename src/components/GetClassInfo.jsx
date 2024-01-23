@@ -1,7 +1,7 @@
 import { Form, FormInput } from "./Forms";
 
 export function GetClassInfo({
-  classNameVale: value,
+  classNameValue: value,
   setClassNameValue: setValue,
 }) {
   return (

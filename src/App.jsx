@@ -59,7 +59,7 @@ function Info() {
   );
   return (
     <>
-      <div className="flex flex-row gap-4 justify-between">
+      <div className="flex flex-row gap-4 justify-start flex-wrap">
         <GetClassInfo
           classNameValue={classNameValue}
           setClassNameValue={setClassNameValue}
