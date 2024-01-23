@@ -118,7 +118,7 @@ function SubjectsList({
   return (
     <ScrollShadow
       orientation="horizontal"
-      className="flex-1 flex flex-row gap-2 p-2 bg-default-100 rounded-2xl shadow-inner shadow-md overflow-auto items-center"
+      className="flex-1 flex flex-row gap-2 p-2 bg-default-100 rounded-2xl shadow-inner overflow-auto items-center"
     >
       {subjectsValues[day] &&
         subjectsValues[day].map((subject, index) => (
@@ -173,7 +173,7 @@ function SubjectKey({
 
   return (
     <div
-      className="flex flex-col gap-1 bg-default-50 p-1 rounded-xl shadow-small focus-within:border-l-3"
+      className="flex flex-col gap-1 bg-default-50 p-1 rounded-xl shadow-md focus-within:border-l-3"
       style={{
         width: 200,
         minWidth: 200,

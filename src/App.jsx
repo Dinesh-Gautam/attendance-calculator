@@ -77,7 +77,7 @@ function Info() {
         subjectsValues={subjectsValues}
         setSubjectsValues={setSubjectsValues}
       />
-      <Card className="mt-auto flex flex-row p-4 gap-2 justify-end fixed bottom-4 inset-x-4">
+      <Card className="mt-auto flex flex-row p-4 gap-2 justify-end fixed bottom-2 inset-x-2">
         {edit && (
           <Button color="danger" variant="light" onClick={() => setEdit(false)}>
             Cancel
