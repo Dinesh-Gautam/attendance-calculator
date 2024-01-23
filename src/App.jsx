@@ -41,22 +41,22 @@ function App() {
 
 function Info() {
   const { info, edit, setEdit, setInfo } = useStateContext();
-  const [subjectsValues, setSubjectsValues] = useState(
-    convertDefaultSubjectsToSubjectsValues(info, noOfDays)
-  );
+
   const [classNameValue, setClassNameValue] = useState(info?.className || "");
   const [datesValue, setDatesValue] = useState({
     startDate: info?.startDate || "",
     endDate: info?.endDate || "",
   });
   const [subjectNamesValue, setSubjectNamesValue] = useState(
-    info?.subjects?.map((s) => s.name).join(",") ||
-      [...subjects]
-        .sort((a, b) => a.id - b.id)
-        .map((s) => s.name)
-        .join(",") ||
-      ""
+    info?.subjects || subjects.map(({ name, id }) => ({ name, id }))
   );
+  const [subjectsValues, setSubjectsValues] = useState(
+    convertDefaultSubjectsToSubjectsValues(
+      { subjects: subjectNamesValue, timeTable: info?.timeTable },
+      noOfDays
+    )
+  );
+
   return (
     <>
       <div className="flex flex-row gap-4 justify-start flex-wrap">
@@ -73,10 +73,13 @@ function Info() {
           setSubjectNamesValue={setSubjectNamesValue}
         />
       </div>
+
       <SetTimeTable
+        info={{ subjects: subjectNamesValue }}
         subjectsValues={subjectsValues}
         setSubjectsValues={setSubjectsValues}
       />
+
       <Card className="mt-auto flex flex-row p-4 gap-2 justify-end fixed bottom-2 inset-x-2">
         {edit && (
           <Button color="danger" variant="light" onClick={() => setEdit(false)}>
@@ -91,15 +94,9 @@ function Info() {
               className: classNameValue,
               startDate: datesValue.startDate,
               endDate: datesValue.endDate,
-              subjects: subjectNamesValue.split(",").map((s, index) => ({
-                name: s.trim(),
-                id:
-                  Math.max(...(subjects.map((sub) => sub.id) || [] || 0)) +
-                  index,
-                ...(subjects.find((sub) => sub.name === s.trim()) || {}),
-              })),
+              subjects: subjectNamesValue,
               timeTable: convertSubjectValuesToDefaultSubjectsValues(
-                info,
+                { subjects: subjectNamesValue },
                 subjectsValues
               ),
             });

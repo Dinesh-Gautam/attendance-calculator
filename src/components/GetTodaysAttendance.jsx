@@ -94,7 +94,7 @@ function GetTodayAttendance() {
   function getFilteredAndSortedTableValues() {
     return !info?.options?.showAllSubjects
       ? sortedData.filter((subject) =>
-          info?.subjects?.some(
+          info?.timeTable?.some(
             (sub) => sub.id === subject.id && sub.lectures?.[todayDate.getDay()]
           )
         )
@@ -186,7 +186,7 @@ function GetTodayAttendance() {
 function shouldShowTableFooter(info, todayDate) {
   return (
     info?.options?.showAllSubjects ||
-    info.subjects.filter((sub) => sub.lectures[todayDate.getDay()]).length > 0
+    info.timeTable.filter((sub) => sub.lectures[todayDate.getDay()]).length > 0
   );
 }
 function MarkAllAttendanceButtons() {
@@ -197,7 +197,7 @@ function MarkAllAttendanceButtons() {
       ...prev,
       [todayDateString]: {
         ...prev[todayDateString],
-        ...info.subjects.reduce((acc, subject) => {
+        ...info.timeTable.reduce((acc, subject) => {
           if (
             (!info?.options?.showAllSubjects &&
               subject.lectures?.[todayDate.getDay()]) ||

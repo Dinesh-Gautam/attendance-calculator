@@ -25,8 +25,8 @@ export function StateProvider({ children }) {
     const info = JSON.parse(localStorage.getItem("info"));
     const days = JSON.parse(localStorage.getItem("days"));
     console.log(info);
-    setInfo(info);
-    setDays(days);
+    setInfo(info ?? {});
+    setDays(days ?? []);
   }, []);
 
   useEffect(() => {

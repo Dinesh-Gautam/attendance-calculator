@@ -3,7 +3,6 @@ import { Card } from "@nextui-org/card";
 import { Input, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
 import { Plus, X } from "react-feather";
 import { noOfDays, subjects } from "../config";
-import { useStateContext } from "../context/stateContext";
 import { getWeekName } from "../utils";
 
 export function convertDefaultSubjectsToSubjectsValues(info, noOfDays) {
@@ -61,7 +60,7 @@ export function convertSubjectValuesToDefaultSubjectsValues(
   return res;
 }
 
-export function SetTimeTable({ subjectsValues, setSubjectsValues }) {
+export function SetTimeTable({ info, subjectsValues, setSubjectsValues }) {
   function onChangeHandler(value, day, index, key) {
     setSubjectsValues((prev) => ({
       ...prev,
@@ -81,6 +80,7 @@ export function SetTimeTable({ subjectsValues, setSubjectsValues }) {
             subjectsValues={subjectsValues}
             onChangeHandler={onChangeHandler}
             setSubjectsValues={setSubjectsValues}
+            info={info}
           />
         ))}
 
@@ -90,7 +90,13 @@ export function SetTimeTable({ subjectsValues, setSubjectsValues }) {
   );
 }
 
-function DayKey({ day, subjectsValues, onChangeHandler, setSubjectsValues }) {
+function DayKey({
+  day,
+  subjectsValues,
+  onChangeHandler,
+  setSubjectsValues,
+  info,
+}) {
   return (
     <div className="w-full max-w-full mb-2">
       <DayLabel day={day} />
@@ -100,6 +106,7 @@ function DayKey({ day, subjectsValues, onChangeHandler, setSubjectsValues }) {
         subjectsValues={subjectsValues}
         onChangeHandler={onChangeHandler}
         setSubjectsValues={setSubjectsValues}
+        info={info}
       />
     </div>
   );
@@ -114,6 +121,7 @@ function SubjectsList({
   subjectsValues,
   onChangeHandler,
   setSubjectsValues,
+  info,
 }) {
   return (
     <ScrollShadow
@@ -129,6 +137,7 @@ function SubjectsList({
             subject={subject}
             onChangeHandler={onChangeHandler}
             setSubjectsValues={setSubjectsValues}
+            info={info}
           />
         ))}
 
@@ -168,9 +177,8 @@ function SubjectKey({
   subject,
   onChangeHandler,
   setSubjectsValues,
+  info,
 }) {
-  const { info } = useStateContext();
-
   return (
     <div
       className="flex flex-col gap-1 bg-default-50 p-1 rounded-xl shadow-md focus-within:border-l-3"
@@ -183,7 +191,7 @@ function SubjectKey({
       <SubjectNameInput
         day={day}
         index={index}
-        subjectName={subject.name}
+        subjectId={subject.id}
         subjects={info?.subjects}
         setSubjectsValues={setSubjectsValues}
         onChangeHandler={onChangeHandler}
@@ -242,7 +250,7 @@ function StartTimeEndTimeInputs({
 function SubjectNameInput({
   day,
   index,
-  subjectName,
+  subjectId,
   subjects,
   setSubjectsValues,
   onChangeHandler,
@@ -255,8 +263,16 @@ function SubjectNameInput({
         aria-label="Subject"
         id="subjectsInput"
         placeholder={"Subject " + (index + 1)}
-        selectedKeys={[subjectName]}
-        onChange={(e) => onChangeHandler(e.target.value, day, index, "name")}
+        selectedKeys={[subjects.find((s) => s.id === subjectId)?.name]}
+        onChange={(e) => {
+          onChangeHandler(e.target.value, day, index, "name");
+          onChangeHandler(
+            subjects.find((s) => s.name === e.target.value).id,
+            day,
+            index,
+            "id"
+          );
+        }}
       >
         {subjects?.map((s) => (
           <SelectItem key={s.name} value={s.name}>
