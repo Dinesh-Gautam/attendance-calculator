@@ -19,3 +19,22 @@ export function isAllDataInserted(info) {
     info.timeTable
   );
 }
+export function getMonthName(month) {
+  return [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ][month];
+}
+export function getWeekNames() {
+  return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+}

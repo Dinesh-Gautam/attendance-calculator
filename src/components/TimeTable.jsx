@@ -1,5 +1,5 @@
 import { Card } from "@nextui-org/card";
-import { getWeekName } from "../utills";
+import { getWeekName } from "../utils";
 
 export function TimeTable({ days, info }) {
   const subjects = info.timeTable;

@@ -3,7 +3,7 @@ import { Card } from "@nextui-org/card";
 import { Input, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
 import { useState } from "react";
 import { subjects } from "../config";
-import { getWeekName } from "../utills";
+import { getWeekName } from "../utils";
 import { FormButton } from "./Forms";
 import { useStateContext } from "../context/stateContext";
 

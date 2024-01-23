@@ -8,7 +8,7 @@ import { GetSubjectNames } from "./components/GetSubjectNames";
 import GetTodayAttendance from "./components/GetTodaysAttendance";
 import { SetTimeTable } from "./components/SetTimeTable";
 import { useStateContext } from "./context/stateContext";
-import { isAllDataInserted } from "./utills";
+import { isAllDataInserted } from "./utils";
 
 function App() {
   const { info, edit, setEdit } = useStateContext();
