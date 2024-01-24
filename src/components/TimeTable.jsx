@@ -5,7 +5,7 @@ export function TimeTable({ days, info }) {
   const subjects = info.timeTable;
 
   return (
-    <Card className="mx-4 p-4 flex flex-row justify-center overflow-auto min-w-fit">
+    <Card className="mx-4 p-4 flex justify-center overflow-auto max-w-full">
       <table className="timetable" borderspacing="1">
         <thead>
           <tr>
@@ -22,7 +22,12 @@ export function TimeTable({ days, info }) {
               getMinStartTimeOfSubjects(subjects),
           }).map((_, time) => (
             <tr key={time}>
-              <th>
+              <th
+                style={{
+                  whiteSpace: "nowrap",
+                  paddingRight: "1em",
+                }}
+              >
                 <span>
                   {formatTime(time + getMinStartTimeOfSubjects(subjects))}
                 </span>
