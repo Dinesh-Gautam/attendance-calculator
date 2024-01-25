@@ -105,9 +105,7 @@ function GetTodayAttendance() {
     <div>
       <Header />
       {showTimeTable ? (
-        <div className="attendance-table">
-          <TimeTable days={days} info={info} />
-        </div>
+        <TimeTable />
       ) : (
         <Card className="p-4 mx-4 overflow-auto">
           <TableOptions />
@@ -265,7 +263,7 @@ function AttendanceButtons({ subject }) {
   });
 }
 
-function getTotalLectures(subject, days) {
+export function getTotalLectures(subject, days) {
   return Object.values(days).reduce((total, day) => {
     return (
       total + (day[subject.id]?.present || day[subject.id]?.absent ? 1 : 0)
@@ -285,7 +283,7 @@ function getAttendancePercentage(subject, days) {
   return total > 0 ? (attended / total) * 100 : 0;
 }
 
-function getRequiredLectures(subject, days) {
+export function getRequiredLectures(subject, days) {
   const total = getTotalLectures(subject, days);
   const attended = getAttendedLectures(subject, days);
 
@@ -293,7 +291,7 @@ function getRequiredLectures(subject, days) {
   return Math.max(required, 0);
 }
 
-function getAllowedHolidays(subject, days) {
+export function getAllowedHolidays(subject, days) {
   const total = getTotalLectures(subject, days);
   const attended = getAttendedLectures(subject, days);
 

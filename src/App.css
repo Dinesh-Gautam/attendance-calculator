@@ -7,8 +7,13 @@ main {
     border-collapse: separate;
 }
 
-.timetable tr * {
+/* .timetable tr * {
     padding : 1em;
+    height: 3em;
+} */
+.timetable tr th  , .timetable tr td {
+    padding-inline: 1em;
+    padding-block: 0.5em;
     height: 3em;
 }
 
@@ -25,12 +30,13 @@ main {
     border-right : 1px solid hsl(var(--nextui-default)); */
     border-radius: var(--nextui-radius-small);
     background : hsl(var(--nextui-default-100));
+    padding-right : 2em;
+
 } 
 
 .timetable th , .timetable td {
     vertical-align: baseline;
     text-align: start;
-    padding-right : 4em;
 }
 .timetable th span {
     padding-inline: 2px;

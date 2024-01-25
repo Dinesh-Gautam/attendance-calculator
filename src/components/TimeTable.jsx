@@ -1,11 +1,23 @@
 import { Card } from "@nextui-org/card";
+import { useStateContext } from "../context/stateContext";
 import { getWeekName } from "../utils";
+import {
+  getAttendedLectures,
+  getRequiredLectures,
+  getTotalLectures,
+} from "./GetTodaysAttendance";
+import { Option } from "./TableOptions";
 
-export function TimeTable({ days, info }) {
+export function TimeTable() {
+  const { days, info } = useStateContext();
   const subjects = info.timeTable;
 
   return (
     <Card className="mx-4 p-4 flex justify-center overflow-auto max-w-full">
+      <div className="flex flex-row gap-2 pb-2">
+        <Option optionKey="showPercentage" text="Show percentage" />
+        <Option optionKey="showStats" text="Show stats" />
+      </div>
       <table className="timetable" borderspacing="1">
         <thead>
           <tr>
@@ -57,17 +69,39 @@ export function TimeTable({ days, info }) {
                   return (
                     <td
                       key={`${subject.id}_${weekNo}${time}`}
+                      rowSpan={subject.endTime - subject.startTime}
                       style={{
                         backgroundColor: getPresentRatioColor(presentRatio),
                       }}
-                      rowSpan={subject.endTime - subject.startTime}
                     >
-                      {subject.name}
-                      {!isNaN(presentRatio) && (
-                        <span style={{ fontSize: "0.8em", marginLeft: "auto" }}>
-                          {presentRatio.toFixed(0)}%
-                        </span>
-                      )}
+                      <div className="flex flex-row items-baseline justify-between gap-2">
+                        {subject.name}
+                        <div className="flex flex-col tex-xs opacity-80">
+                          {!isNaN(presentRatio) &&
+                            info?.options?.showPercentage && (
+                              <span>{presentRatio.toFixed(0)}%</span>
+                            )}
+                          {info?.options?.showStats && (
+                            <div className="flex flex-row gap-1 text-xs">
+                              <span>L{getTotalLectures(subject, days)}</span>
+                              <span>
+                                {" "}
+                                P{getAttendedLectures(subject, days)}
+                              </span>
+
+                              <span>
+                                {" "}
+                                A{getRequiredLectures(subject, days)}
+                              </span>
+
+                              <span>
+                                {" "}
+                                R{getRequiredLectures(subject, days)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </td>
                   );
                 }

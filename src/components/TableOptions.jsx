@@ -3,9 +3,8 @@ import { Checkbox } from "@nextui-org/react";
 import { useStateContext } from "../context/stateContext";
 
 export function TableOptions() {
-  const { info, setInfo, todayDate } = useStateContext();
+  const { todayDate } = useStateContext();
   const todayDateString = todayDate.toDateString();
-  console.log(!!info?.options?.showAllSubjects);
   return (
     <div className="flex items-center mb-3 gap-4">
       <div>
@@ -13,22 +12,29 @@ export function TableOptions() {
         <span className="font-bold">{todayDateString}</span>
       </div>
       <div className="flex flex-row gap-2 items-center">
-        <Checkbox
-          type="checkbox"
-          defaultSelected={!!info?.options?.showAllSubjects}
-          onChange={(e) =>
-            setInfo((prev) => ({
-              ...prev,
-              options: {
-                ...prev.options,
-                showAllSubjects: e.target.checked,
-              },
-            }))
-          }
-        >
-          Show All Subjects
-        </Checkbox>
+        <Option optionKey="showAllSubjects" text={"Show all subjects"} />
       </div>
     </div>
+  );
+}
+
+export function Option({ optionKey, text }) {
+  const { info, setInfo } = useStateContext();
+  return (
+    <Checkbox
+      type="checkbox"
+      defaultSelected={!!info?.options?.[optionKey]}
+      onChange={(e) =>
+        setInfo((prev) => ({
+          ...prev,
+          options: {
+            ...prev.options,
+            [optionKey]: e.target.checked,
+          },
+        }))
+      }
+    >
+      {text}
+    </Checkbox>
   );
 }
