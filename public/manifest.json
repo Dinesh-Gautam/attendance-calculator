@@ -1,6 +1,6 @@
 {
-  "short_name": "Attendance Calculator",
-  "name": "Attendance Calculator App",
+  "short_name": "AC",
+  "name": "Attendance Calculator",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,8 @@
   ],
   "start_url": ".",
   "display": "standalone",
+  "display_override": ["fullscreen", "minimal-ui"],
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "prefer_related_applications": true
 }
