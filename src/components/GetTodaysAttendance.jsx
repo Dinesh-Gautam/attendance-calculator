@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useStateContext } from "../context/stateContext";
 import { Charts } from "./Charts";
 import Header from "./Header";

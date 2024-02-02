@@ -17,14 +17,14 @@ export function StateProvider({ children }) {
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const [displayChart, setDisplayChart] = useState("Attended Lectures");
-
+  const [stateHistory, setStateHistory] = useState([]);
   const theme = useDarkMode(true);
 
   useEffect(() => {
     // get info from localStorage
     const info = JSON.parse(localStorage.getItem("info"));
     const days = JSON.parse(localStorage.getItem("days"));
-    console.log(info);
+
     setInfo(info ?? {});
     setDays(days ?? []);
   }, []);
@@ -63,6 +63,8 @@ export function StateProvider({ children }) {
         displayChart,
         setDisplayChart,
         theme,
+        stateHistory,
+        setStateHistory,
       }}
     >
       {children}

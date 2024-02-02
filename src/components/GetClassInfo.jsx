@@ -1,4 +1,4 @@
-import { Form, FormInput } from "./Forms";
+import { Form, FormFooter, FormInput } from "./Forms";
 
 export function GetClassInfo({
   classNameValue: value,
@@ -14,7 +14,7 @@ export function GetClassInfo({
         label="Class Name"
       />
 
-      {/* <FormButton>Submit</FormButton> */}
+      <FormFooter state={value} setState={setValue} />
     </Form>
   );
 }
