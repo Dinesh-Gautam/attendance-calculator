@@ -12,24 +12,31 @@ import {
   convertSubjectValuesToDefaultSubjectsValues,
 } from "./SetTimeTable";
 
+const defaultValues = {
+  className: "",
+  startDate: "",
+  endDate: "",
+  subjects: subjects.map(({ name, id }) => ({ name, id })),
+};
+
 export function Info() {
   const { info, edit, setEdit, setInfo } = useStateContext();
 
   const initialValues = useMemo(() => {
     return {
-      className: info?.className || "",
+      className: info?.className || defaultValues.className,
       datesValue: {
-        startDate: info?.startDate || "",
-        endDate: info?.endDate || "",
+        startDate: info?.startDate || defaultValues.startDate,
+        endDate: info?.endDate || defaultValues.endDate,
       },
-      subjects: subjects.map(({ name, id }) => ({ name, id })),
+      subjects: info?.subjects || defaultValues.subjects,
     };
   }, [info]);
 
   const [classNameValue, setClassNameValue] = useState(initialValues.className);
   const [datesValue, setDatesValue] = useState(initialValues.datesValue);
   const [subjectNamesValue, setSubjectNamesValue] = useState(
-    info?.subjects || initialValues.subjects
+    initialValues.subjects
   );
 
   initialValues.subjectsValues = useMemo(
