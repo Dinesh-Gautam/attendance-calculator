@@ -1,10 +1,11 @@
 import { Button } from "@nextui-org/react";
-import { Form, FormInput } from "./Forms";
+import { Form, FormFooter, FormInput } from "./Forms";
 import { Plus, X } from "react-feather";
 import { v4 as uuidv4 } from "uuid";
 export function GetSubjectNames({
   subjectNamesValue: value,
   setSubjectNamesValue: setValue,
+  initialValue,
 }) {
   return (
     <Form>
@@ -50,6 +51,11 @@ export function GetSubjectNames({
           <Plus />
         </Button>
       </div>
+      <FormFooter
+        state={value}
+        setState={setValue}
+        initialValue={initialValue}
+      />
     </Form>
   );
 }

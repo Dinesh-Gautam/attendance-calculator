@@ -3,6 +3,7 @@ import { Form, FormInput } from "./Forms";
 export function GetStartAndEndDate({
   datesValue: value,
   setDatesValue: setValue,
+  initialValue,
 }) {
   return (
     <Form>
@@ -27,7 +28,6 @@ export function GetStartAndEndDate({
           setValue((prev) => ({ ...prev, endDate: e.target.value }))
         }
       />
-      {/* <FormButton type="submit">Submit</FormButton> */}
     </Form>
   );
 }

@@ -1,6 +1,8 @@
 import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { noOfDays, subjects } from "../config";
+import { useStateContext } from "../context/stateContext";
 import { GetClassInfo } from "./GetClassInfo";
 import { GetStartAndEndDate } from "./GetStartAndEndDate";
 import { GetSubjectNames } from "./GetSubjectNames";
@@ -9,26 +11,41 @@ import {
   convertDefaultSubjectsToSubjectsValues,
   convertSubjectValuesToDefaultSubjectsValues,
 } from "./SetTimeTable";
-import { noOfDays, subjects } from "../config";
-import { useStateContext } from "../context/stateContext";
 
 export function Info() {
   const { info, edit, setEdit, setInfo } = useStateContext();
 
-  const [classNameValue, setClassNameValue] = useState(info?.className || "");
-  const [datesValue, setDatesValue] = useState({
-    startDate: info?.startDate || "",
-    endDate: info?.endDate || "",
-  });
+  const initialValues = useMemo(() => {
+    return {
+      className: info?.className || "",
+      datesValue: {
+        startDate: info?.startDate || "",
+        endDate: info?.endDate || "",
+      },
+      subjects: subjects.map(({ name, id }) => ({ name, id })),
+    };
+  }, [info]);
+
+  const [classNameValue, setClassNameValue] = useState(initialValues.className);
+  const [datesValue, setDatesValue] = useState(initialValues.datesValue);
   const [subjectNamesValue, setSubjectNamesValue] = useState(
-    info?.subjects || subjects.map(({ name, id }) => ({ name, id }))
+    info?.subjects || initialValues.subjects
   );
+
+  initialValues.subjectsValues = useMemo(
+    () =>
+      convertDefaultSubjectsToSubjectsValues(
+        { subjects: subjectNamesValue, timeTable: info?.timeTable },
+        noOfDays
+      ),
+    [subjectNamesValue, info?.timeTable]
+  );
+
   const [subjectsValues, setSubjectsValues] = useState(
-    convertDefaultSubjectsToSubjectsValues(
-      { subjects: subjectNamesValue, timeTable: info?.timeTable },
-      noOfDays
-    )
+    initialValues.subjectsValues
   );
+
+  const subjectNames = subjectNamesValue;
 
   return (
     <>
@@ -36,21 +53,28 @@ export function Info() {
         <GetClassInfo
           classNameValue={classNameValue}
           setClassNameValue={setClassNameValue}
+          initialValue={initialValues.className}
         />
         <GetStartAndEndDate
           datesValue={datesValue}
           setDatesValue={setDatesValue}
+          initialValue={initialValues.datesValue}
         />
         <GetSubjectNames
           subjectNamesValue={subjectNamesValue}
           setSubjectNamesValue={setSubjectNamesValue}
+          initialValue={initialValues.subjects}
         />
       </div>
 
       <SetTimeTable
-        info={{ subjects: subjectNamesValue }}
+        info={{ subjects: subjectNames }}
         subjectsValues={subjectsValues}
         setSubjectsValues={setSubjectsValues}
+        initialValue={convertDefaultSubjectsToSubjectsValues(
+          { subjects: initialValues.subjects, timeTable: subjects },
+          noOfDays
+        )}
       />
 
       <Card className="mt-auto flex flex-row p-4 gap-2 justify-end fixed bottom-2 inset-x-2">

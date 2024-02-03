@@ -1,9 +1,10 @@
 import { Button } from "@nextui-org/button";
-import { Card } from "@nextui-org/card";
 import { Input, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
+import { useCallback, useMemo } from "react";
 import { Plus, X } from "react-feather";
 import { noOfDays, subjects } from "../config";
 import { getWeekName } from "../utils";
+import { Form, FormFooter } from "./Forms";
 
 export function convertDefaultSubjectsToSubjectsValues(info, noOfDays) {
   const defaultSubjects = info?.timeTable || subjects;
@@ -60,33 +61,42 @@ export function convertSubjectValuesToDefaultSubjectsValues(
   return res;
 }
 
-export function SetTimeTable({ info, subjectsValues, setSubjectsValues }) {
-  function onChangeHandler(value, day, index, key) {
+export function SetTimeTable({
+  info,
+  subjectsValues,
+  setSubjectsValues,
+  initialValue,
+}) {
+  const onChangeHandler = useCallback((value, day, index, key) => {
     setSubjectsValues((prev) => ({
       ...prev,
       [day]: prev[day].map((s, i) =>
         i === index ? { ...s, [key]: value } : s
       ),
     }));
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  const daysArray = useMemo(() => Array.from({ length: noOfDays }), []);
   return (
-    <Card className="p-4 w-full mb-20">
-      <form className="max-w-full w-full">
-        {Array.from({ length: noOfDays }).map((_, day) => (
-          <DayKey
-            key={day + 1}
-            day={day + 1}
-            subjectsValues={subjectsValues}
-            onChangeHandler={onChangeHandler}
-            setSubjectsValues={setSubjectsValues}
-            info={info}
-          />
-        ))}
-
-        {/* <FormButton type="submit">Submit</FormButton> */}
-      </form>
-    </Card>
+    <Form className="mb-14">
+      {daysArray.map((_, day) => (
+        <DayKey
+          key={day + 1}
+          day={day + 1}
+          subjectsValues={subjectsValues}
+          onChangeHandler={onChangeHandler}
+          setSubjectsValues={setSubjectsValues}
+          info={info}
+        />
+      ))}
+      <FormFooter
+        state={subjectsValues}
+        setState={setSubjectsValues}
+        initialValue={initialValue}
+      />
+      {/* <FormButton type="submit">Submit</FormButton> */}
+    </Form>
   );
 }
 
@@ -113,7 +123,8 @@ function DayKey({
 }
 
 function DayLabel({ day }) {
-  return <span className="font-bold text-sm p-2">{getWeekName(day)}</span>;
+  const weekName = useMemo(() => getWeekName(day), [day]);
+  return <span className="font-bold text-sm p-2">{weekName}</span>;
 }
 
 function SubjectsList({
@@ -255,6 +266,10 @@ function SubjectNameInput({
   setSubjectsValues,
   onChangeHandler,
 }) {
+  const selectedKey = useMemo(
+    () => subjects.find((s) => s.id === subjectId)?.name,
+    [subjectId, subjects]
+  );
   return (
     <div className="flex flex-row gap-2">
       <Select
@@ -263,7 +278,7 @@ function SubjectNameInput({
         aria-label="Subject"
         id="subjectsInput"
         placeholder={"Subject " + (index + 1)}
-        selectedKeys={[subjects.find((s) => s.id === subjectId)?.name]}
+        selectedKeys={[selectedKey]}
         onChange={(e) => {
           onChangeHandler(e.target.value, day, index, "name");
           onChangeHandler(

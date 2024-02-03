@@ -1,11 +1,11 @@
 import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
 import { Input } from "@nextui-org/react";
-import useUndo from "../hooks/useUndo";
+// import useUndo from "../hooks/useUndo";
 
 export function Form({ children, ...formProps }) {
   return (
-    <Card className="p-4 w-fit">
+    <Card className="p-4 w-fit max-w-full">
       <form className="flex flex-col gap-4 max-w-fit" {...formProps}>
         {children}
       </form>
@@ -14,14 +14,7 @@ export function Form({ children, ...formProps }) {
 }
 
 export function FormInput({ ...props }) {
-  return (
-    <input
-      disableAnimation={true}
-      variant="faded"
-      type={props.type || "text"}
-      {...props}
-    />
-  );
+  return <Input variant="faded" type={props.type || "text"} {...props} />;
 }
 
 export function FormButton({ children, onClick }) {
@@ -32,13 +25,12 @@ export function FormButton({ children, onClick }) {
   );
 }
 
-export function FormFooter({ state }) {
-  return null;
-  const { canUndo, canRedo, undo, redo } = useUndo(state);
+export function FormFooter({ state, setState, initialValue }) {
+  // const { canUndo, canRedo, undo, redo } = useUndo(state);
   return (
-    <Card className="p-1 flex flex-row gap-1 justify-between m-top-auto">
+    <div className="flex flex-row gap-1 justify-between m-top-auto">
       <FlexBox>
-        {canUndo && (
+        {/* {canUndo && (
           <Button variant="flat" onClick={undo}>
             Undo
           </Button>
@@ -47,12 +39,24 @@ export function FormFooter({ state }) {
           <Button variant="flat" onClick={redo}>
             Redo
           </Button>
-        )}
+        )} */}
       </FlexBox>
-      <FlexBox>
-        <Button variant="flat">Restore</Button>
-      </FlexBox>
-    </Card>
+      {initialValue && (
+        <FlexBox>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              window.confirm(
+                "Are you sure you want to restore the default value?"
+              ) && setState(initialValue);
+            }}
+            variant="flat"
+          >
+            Restore
+          </Button>
+        </FlexBox>
+      )}
+    </div>
   );
 }
 

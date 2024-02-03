@@ -1,8 +1,9 @@
-import { Form, FormFooter, FormInput } from "./Forms";
+import { Form, FormInput } from "./Forms";
 
 export function GetClassInfo({
   classNameValue: value,
   setClassNameValue: setValue,
+  initialValue,
 }) {
   return (
     <Form>
@@ -13,8 +14,6 @@ export function GetClassInfo({
         value={value}
         label="Class Name"
       />
-
-      <FormFooter state={value} setState={setValue} />
     </Form>
   );
 }
