@@ -1,9 +1,4 @@
-import {
-  Button,
-  Autocomplete,
-  AutocompleteItem,
-  Card,
-} from "@nextui-org/react";
+import { Button, Card } from "@nextui-org/react";
 import { Form, FormFooter, FormInput } from "./Forms";
 import { Plus, X } from "react-feather";
 import { v4 as uuidv4 } from "uuid";
