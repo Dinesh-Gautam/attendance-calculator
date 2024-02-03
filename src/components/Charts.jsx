@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Chart from "react-google-charts";
 import { Card, Select, SelectItem } from "@nextui-org/react";
 import { useStateContext } from "../context/stateContext";

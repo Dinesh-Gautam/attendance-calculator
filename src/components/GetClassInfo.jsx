@@ -3,6 +3,7 @@ import { Form, FormInput } from "./Forms";
 export function GetClassInfo({
   classNameValue: value,
   setClassNameValue: setValue,
+  initialValue,
 }) {
   return (
     <Form>
@@ -13,8 +14,6 @@ export function GetClassInfo({
         value={value}
         label="Class Name"
       />
-
-      {/* <FormButton>Submit</FormButton> */}
     </Form>
   );
 }
