@@ -49,7 +49,7 @@ export function Info() {
 
   return (
     <>
-      {edit.type === "info" && <div className="flex flex-row gap-4 justify-start flex-wrap">
+      {(edit.type === "info" || !edit) && <div className="flex flex-row gap-4 justify-start flex-wrap">
         <GetClassInfo
           classNameValue={classNameValue}
           setClassNameValue={setClassNameValue}
