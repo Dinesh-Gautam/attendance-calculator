@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { StateProvider, useStateContext } from "./context/stateContext";
 import "./index.css";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -24,3 +25,5 @@ function Main() {
     </main>
   );
 }
+
+serviceWorkerRegistration.register();

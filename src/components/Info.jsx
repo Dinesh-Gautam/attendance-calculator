@@ -56,7 +56,7 @@ export function Info() {
 
   return (
     <>
-      <div className="flex flex-row gap-4 justify-start flex-wrap">
+      {(edit.type === "info" || !edit) && <div className="flex flex-row gap-4 justify-start flex-wrap">
         <GetClassInfo
           classNameValue={classNameValue}
           setClassNameValue={setClassNameValue}
@@ -72,9 +72,9 @@ export function Info() {
           setSubjectNamesValue={setSubjectNamesValue}
           initialValue={initialValues.subjects}
         />
-      </div>
+      </div>}
 
-      <SetTimeTable
+      {edit.type === "timetable" && <SetTimeTable
         info={{ subjects: subjectNames }}
         subjectsValues={subjectsValues}
         setSubjectsValues={setSubjectsValues}
@@ -83,7 +83,7 @@ export function Info() {
           noOfDays
         )}
       />
-
+      }
       <Card className="mt-auto flex flex-row p-4 gap-2 justify-end fixed bottom-2 inset-x-2">
         <div className="flex flex-row gap-2">
           {edit && (

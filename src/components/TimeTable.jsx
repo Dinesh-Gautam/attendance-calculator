@@ -2,6 +2,7 @@ import { Card } from "@nextui-org/card";
 import { useStateContext } from "../context/stateContext";
 import { getWeekName } from "../utils";
 import {
+  getAllowedHolidays,
   getAttendedLectures,
   getRequiredLectures,
   getTotalLectures,
@@ -83,18 +84,20 @@ export function TimeTable() {
                             )}
                           {info?.options?.showStats && (
                             <div className="flex flex-row gap-1 text-xs">
-                              <span>L{getTotalLectures(subject, days)}</span>
-                              <span>
+                              <span title="Total lectures">
+                                L{getTotalLectures(subject, days)}
+                              </span>
+                              <span title="Lectures attended">
                                 {" "}
                                 P{getAttendedLectures(subject, days)}
                               </span>
 
-                              <span>
+                              <span title="Allowed holidays">
                                 {" "}
-                                A{getRequiredLectures(subject, days)}
+                                A{getAllowedHolidays(subject, days)}
                               </span>
 
-                              <span>
+                              <span title="Lectures required">
                                 {" "}
                                 R{getRequiredLectures(subject, days)}
                               </span>
