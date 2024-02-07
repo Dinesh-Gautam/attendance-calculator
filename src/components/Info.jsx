@@ -22,16 +22,14 @@ const defaultValues = {
 export function Info() {
   const { info, edit, setEdit, setInfo } = useStateContext();
 
-  const initialValues = useMemo(() => {
-    return {
-      className: info?.className || defaultValues.className,
-      datesValue: {
-        startDate: info?.startDate || defaultValues.startDate,
-        endDate: info?.endDate || defaultValues.endDate,
-      },
-      subjects: info?.subjects || defaultValues.subjects,
-    };
-  }, [info]);
+  const initialValues = {
+    className: info?.className || defaultValues.className,
+    datesValue: {
+      startDate: info?.startDate || defaultValues.startDate,
+      endDate: info?.endDate || defaultValues.endDate,
+    },
+    subjects: info?.subjects || defaultValues.subjects,
+  };
 
   const [classNameValue, setClassNameValue] = useState(initialValues.className);
   const [datesValue, setDatesValue] = useState(initialValues.datesValue);
@@ -45,7 +43,8 @@ export function Info() {
         { subjects: subjectNamesValue, timeTable: info?.timeTable },
         noOfDays
       ),
-    [subjectNamesValue, info?.timeTable]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const [subjectsValues, setSubjectsValues] = useState(
@@ -56,34 +55,37 @@ export function Info() {
 
   return (
     <>
-      {(edit.type === "info" || !edit) && <div className="flex flex-row gap-4 justify-start flex-wrap">
-        <GetClassInfo
-          classNameValue={classNameValue}
-          setClassNameValue={setClassNameValue}
-          initialValue={initialValues.className}
-        />
-        <GetStartAndEndDate
-          datesValue={datesValue}
-          setDatesValue={setDatesValue}
-          initialValue={initialValues.datesValue}
-        />
-        <GetSubjectNames
-          subjectNamesValue={subjectNamesValue}
-          setSubjectNamesValue={setSubjectNamesValue}
-          initialValue={initialValues.subjects}
-        />
-      </div>}
+      {(edit.type === "info" || !edit) && (
+        <div className="flex flex-row gap-4 justify-start flex-wrap">
+          <GetClassInfo
+            classNameValue={classNameValue}
+            setClassNameValue={setClassNameValue}
+            initialValue={initialValues.className}
+          />
+          <GetStartAndEndDate
+            datesValue={datesValue}
+            setDatesValue={setDatesValue}
+            initialValue={initialValues.datesValue}
+          />
+          <GetSubjectNames
+            subjectNamesValue={subjectNamesValue}
+            setSubjectNamesValue={setSubjectNamesValue}
+            initialValue={initialValues.subjects}
+          />
+        </div>
+      )}
 
-      {edit.type === "timetable" && <SetTimeTable
-        info={{ subjects: subjectNames }}
-        subjectsValues={subjectsValues}
-        setSubjectsValues={setSubjectsValues}
-        initialValue={convertDefaultSubjectsToSubjectsValues(
-          { subjects: initialValues.subjects, timeTable: subjects },
-          noOfDays
-        )}
-      />
-      }
+      {edit.type === "timetable" && (
+        <SetTimeTable
+          info={{ subjects: subjectNames }}
+          subjectsValues={subjectsValues}
+          setSubjectsValues={setSubjectsValues}
+          initialValue={convertDefaultSubjectsToSubjectsValues(
+            { subjects: initialValues.subjects, timeTable: subjects },
+            noOfDays
+          )}
+        />
+      )}
       <Card className="mt-auto flex flex-row p-4 gap-2 justify-end fixed bottom-2 inset-x-2">
         <div className="flex flex-row gap-2">
           {edit && (
