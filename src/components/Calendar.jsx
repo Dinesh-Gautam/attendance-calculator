@@ -79,18 +79,29 @@ function CalenderWeek({ startDate, weekNo, monthNo }) {
   });
 }
 
-function getPresentAndAbsentCount(type, days, currentDate) {
+function getPresentAndAbsentCount(type, days, currentDate, selected) {
   return (
-    Object.values(days?.[currentDate] ?? {})?.filter((day) => day[type])
-      .length ?? 0
+    (Object.entries(days?.[currentDate] ?? {})?.filter(([id, day]) =>
+      selected ? selected === id && day[type] : day[type]
+    ).length ?? 0) + (selected ? 10 : 0)
   );
 }
 
 function CalenderButton({ day, monthNo, date, currentDate }) {
   const { info, days, todayDate, setToDayDate, originalDate, selectedSubject } =
     useStateContext();
-  const presentCount = getPresentAndAbsentCount("present", days, currentDate);
-  const absentCount = getPresentAndAbsentCount("absent", days, currentDate);
+  const presentCount = getPresentAndAbsentCount(
+    "present",
+    days,
+    currentDate,
+    selectedSubject
+  );
+  const absentCount = getPresentAndAbsentCount(
+    "absent",
+    days,
+    currentDate,
+    selectedSubject
+  );
   const presentRatio = (presentCount * 255) / 6;
   const absentRatio = (absentCount * 255) / 6;
   function isCurrentDateSelected() {
@@ -102,10 +113,12 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
       ? "var(--nextui-danger)"
       : "var(--nextui-success)"
   } / ${
-    (absentRatio > 0 && presentRatio < absentRatio
-      ? absentRatio - presentRatio
-      : presentRatio - absentRatio) /
-    (255 * 2)
+    selectedSubject
+      ? 1
+      : (absentRatio > 0 && presentRatio < absentRatio
+          ? absentRatio - presentRatio
+          : presentRatio - absentRatio) /
+        (255 * 2)
   })`;
 
   return (
