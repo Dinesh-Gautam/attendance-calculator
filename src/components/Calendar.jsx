@@ -136,10 +136,6 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
         !isCurrentDateSelected()
           ? {
               backgroundColor,
-              // color:
-              //   originalDate.toDateString() === currentDate
-              //     ? `hsl(var(--nextui-default-300)`
-              //     : "white",
             }
           : {}
       }
