@@ -115,9 +115,7 @@ function GetTodayAttendance() {
               className="w-full min-w-fit"
               selectionMode="single"
               onSelectionChange={(e) => {
-                console.log(e);
                 const selected = e.has(e.currentKey) ? e.currentKey : null;
-                console.log(selected);
                 setSelectedSubject(selected);
               }}
               sortDescriptor={{

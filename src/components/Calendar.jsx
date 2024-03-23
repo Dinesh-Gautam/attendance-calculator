@@ -96,6 +96,18 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
   function isCurrentDateSelected() {
     return todayDate.toDateString() === currentDate;
   }
+
+  const backgroundColor = `hsl(${
+    absentRatio > 0 && absentRatio > presentRatio
+      ? "var(--nextui-danger)"
+      : "var(--nextui-success)"
+  } / ${
+    (absentRatio > 0 && presentRatio < absentRatio
+      ? absentRatio - presentRatio
+      : presentRatio - absentRatio) /
+    (255 * 2)
+  })`;
+
   return (
     <Button
       isDisabled={isCalendarButtonDisabled(
@@ -116,22 +128,18 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
       }
       color={isCurrentDateSelected() ? "primary" : "default"}
       style={
-        (!isCurrentDateSelected() && !selectedSubject) ||
-        ((days[currentDate]?.[selectedSubject]?.present ||
-          days[currentDate]?.[selectedSubject]?.absent) &&
-          presentRatio + absentRatio > 0 &&
-          currentDate !== originalDate.toDateString())
+        (!selectedSubject ||
+          ((days[currentDate]?.[selectedSubject]?.present ||
+            days[currentDate]?.[selectedSubject]?.absent) &&
+            presentRatio + absentRatio > 0)) &&
+        originalDate.toDateString() !== currentDate &&
+        !isCurrentDateSelected()
           ? {
-              backgroundColor: `hsl(${
-                absentRatio > 0 && absentRatio > presentRatio
-                  ? "var(--nextui-danger)"
-                  : "var(--nextui-success)"
-              } / ${
-                (absentRatio > 0 && presentRatio < absentRatio
-                  ? absentRatio - presentRatio
-                  : presentRatio - absentRatio) /
-                (255 * 2)
-              })`,
+              backgroundColor,
+              // color:
+              //   originalDate.toDateString() === currentDate
+              //     ? `hsl(var(--nextui-default-300)`
+              //     : "white",
             }
           : {}
       }
