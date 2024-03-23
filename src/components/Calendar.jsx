@@ -87,7 +87,7 @@ function getPresentAndAbsentCount(type, days, currentDate) {
 }
 
 function CalenderButton({ day, monthNo, date, currentDate }) {
-  const { info, days, todayDate, setToDayDate, originalDate } =
+  const { info, days, todayDate, setToDayDate, originalDate, selectedSubject } =
     useStateContext();
   const presentCount = getPresentAndAbsentCount("present", days, currentDate);
   const absentCount = getPresentAndAbsentCount("absent", days, currentDate);
@@ -116,9 +116,11 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
       }
       color={isCurrentDateSelected() ? "primary" : "default"}
       style={
-        !isCurrentDateSelected() &&
-        presentRatio + absentRatio > 0 &&
-        currentDate !== originalDate.toDateString()
+        (!isCurrentDateSelected() && !selectedSubject) ||
+        ((days[currentDate]?.[selectedSubject]?.present ||
+          days[currentDate]?.[selectedSubject]?.absent) &&
+          presentRatio + absentRatio > 0 &&
+          currentDate !== originalDate.toDateString())
           ? {
               backgroundColor: `hsl(${
                 absentRatio > 0 && absentRatio > presentRatio
