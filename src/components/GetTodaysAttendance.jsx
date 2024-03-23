@@ -114,6 +114,7 @@ function GetTodayAttendance() {
             <Table
               className="w-full min-w-fit"
               selectionMode="single"
+              disabledKeys={["100"]}
               onSelectionChange={(e) => {
                 const selected = e.has(e.currentKey) ? e.currentKey : null;
                 setSelectedSubject(selected);
@@ -164,7 +165,7 @@ function GetTodayAttendance() {
                 })}
 
                 {shouldShowTableFooter(info, todayDate) && (
-                  <TableRow key="10">
+                  <TableRow key="100">
                     {Object.values(tableValues).map((heading, index) => {
                       return index !== 1 ? (
                         <TableCell key={heading[index].values[0] + index} />
