@@ -4,7 +4,7 @@ import { useStateContext } from "../context/stateContext";
 import { getMonthName } from "../utils";
 import { getWeekNames } from "../utils";
 
-export function Calendar() {
+export default function Calendar() {
   const { info } = useStateContext();
   const noOfMonth = getMonthsBetween(info.startDate, info.endDate);
   return (

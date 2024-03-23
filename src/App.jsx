@@ -1,9 +1,13 @@
+import React, { Suspense } from "react";
 import "./App.css";
-import { Calendar } from "./components/Calendar";
-import GetTodayAttendance from "./components/GetTodaysAttendance";
 import { useStateContext } from "./context/stateContext";
 import { isAllDataInserted } from "./utils";
-import { Info } from "./components/Info";
+
+const GetTodayAttendance = React.lazy(() =>
+  import("./components/GetTodaysAttendance")
+);
+const Info = React.lazy(() => import("./components/Info"));
+const Calendar = React.lazy(() => import("./components/Calendar"));
 
 function App() {
   const { info, edit } = useStateContext();
@@ -13,14 +17,18 @@ function App() {
       <>
         {(edit || !isAllDataInserted(info)) && (
           <div className="p-4 flex flex-col gap-4 items-start">
-            <Info />
+            <Suspense>
+              <Info />
+            </Suspense>
           </div>
         )}
 
         {!edit && isAllDataInserted(info) && (
           <>
-            <GetTodayAttendance />
-            <Calendar />
+            <Suspense>
+              <GetTodayAttendance />
+              <Calendar />
+            </Suspense>
           </>
         )}
       </>

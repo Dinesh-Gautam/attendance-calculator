@@ -19,7 +19,7 @@ const defaultValues = {
   subjects: subjects.map(({ name, id }) => ({ name, id })),
 };
 
-export function Info() {
+export default function Info() {
   const { info, edit, setEdit, setInfo } = useStateContext();
 
   const initialValues = {
