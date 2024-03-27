@@ -16,7 +16,8 @@ import { TableOptions } from "./TableOptions";
 import { TimeTable } from "./TimeTable";
 
 function GetTodayAttendance() {
-  const { showTimeTable, info, days, todayDate } = useStateContext();
+  const { showTimeTable, info, days, todayDate, setSelectedSubject } =
+    useStateContext();
   const [sortCol, setSortCol] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const todayDateString = todayDate.toDateString();
@@ -109,10 +110,15 @@ function GetTodayAttendance() {
       ) : (
         <Card className="p-4 mx-4 overflow-auto">
           <TableOptions />
-
           <div className="flex gap-4">
             <Table
               className="w-full min-w-fit"
+              selectionMode="single"
+              disabledKeys={["100"]}
+              onSelectionChange={(e) => {
+                const selected = e.has(e.currentKey) ? e.currentKey : null;
+                setSelectedSubject(selected);
+              }}
               sortDescriptor={{
                 direction: sortOrder === 1 ? "descending" : "ascending",
                 column: Object.keys(tableValues).indexOf(sortCol).toString(),
@@ -159,12 +165,12 @@ function GetTodayAttendance() {
                 })}
 
                 {shouldShowTableFooter(info, todayDate) && (
-                  <TableRow>
+                  <TableRow key="100">
                     {Object.values(tableValues).map((heading, index) => {
                       return index !== 1 ? (
-                        <TableCell key={index} />
+                        <TableCell key={heading[index].values[0] + index} />
                       ) : (
-                        <TableCell key={index}>
+                        <TableCell key={heading[index].values[0] + index}>
                           <MarkAllAttendanceButtons />
                         </TableCell>
                       );

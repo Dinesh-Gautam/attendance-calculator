@@ -6,7 +6,7 @@ import { getWeekNames } from "../utils";
 import { holidays } from "../config";
 import { useMemo } from "react";
 
-export function Calendar() {
+export default function Calendar() {
   const { info } = useStateContext();
   const noOfMonth = getMonthsBetween(info.startDate, info.endDate);
   return (
@@ -81,18 +81,29 @@ function CalenderWeek({ startDate, weekNo, monthNo }) {
   });
 }
 
-function getPresentAndAbsentCount(type, days, currentDate) {
+function getPresentAndAbsentCount(type, days, currentDate, selected) {
   return (
-    Object.values(days?.[currentDate] ?? {})?.filter((day) => day[type])
-      .length ?? 0
+    (Object.entries(days?.[currentDate] ?? {})?.filter(([id, day]) =>
+      selected ? selected === id && day[type] : day[type]
+    ).length ?? 0) + (selected ? 10 : 0)
   );
 }
 
 function CalenderButton({ day, monthNo, date, currentDate }) {
-  const { info, days, todayDate, setToDayDate, originalDate } =
+  const { info, days, todayDate, setToDayDate, originalDate, selectedSubject } =
     useStateContext();
-  const presentCount = getPresentAndAbsentCount("present", days, currentDate);
-  const absentCount = getPresentAndAbsentCount("absent", days, currentDate);
+  const presentCount = getPresentAndAbsentCount(
+    "present",
+    days,
+    currentDate,
+    selectedSubject
+  );
+  const absentCount = getPresentAndAbsentCount(
+    "absent",
+    days,
+    currentDate,
+    selectedSubject
+  );
   const presentRatio = (presentCount * 255) / 6;
   const absentRatio = (absentCount * 255) / 6;
   const isHoliday = useMemo(
@@ -103,6 +114,20 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
   function isCurrentDateSelected() {
     return todayDate.toDateString() === currentDate;
   }
+
+  const backgroundColor = `hsl(${
+    absentRatio > 0 && absentRatio > presentRatio
+      ? "var(--nextui-danger)"
+      : "var(--nextui-success)"
+  } / ${
+    selectedSubject
+      ? 1
+      : (absentRatio > 0 && presentRatio < absentRatio
+          ? absentRatio - presentRatio
+          : presentRatio - absentRatio) /
+        (255 * 2)
+  })`;
+
   return (
     <Button
       isDisabled={isCalendarButtonDisabled(
@@ -123,20 +148,14 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
       }
       color={isCurrentDateSelected() ? "primary" : "default"}
       style={
-        !isCurrentDateSelected() &&
-        presentRatio + absentRatio > 0 &&
-        currentDate !== originalDate.toDateString()
+        (!selectedSubject ||
+          ((days[currentDate]?.[selectedSubject]?.present ||
+            days[currentDate]?.[selectedSubject]?.absent) &&
+            presentRatio + absentRatio > 0)) &&
+        originalDate.toDateString() !== currentDate &&
+        !isCurrentDateSelected()
           ? {
-              backgroundColor: `hsl(${
-                absentRatio > 0 && absentRatio > presentRatio
-                  ? "var(--nextui-danger)"
-                  : "var(--nextui-success)"
-              } / ${
-                (absentRatio > 0 && presentRatio < absentRatio
-                  ? absentRatio - presentRatio
-                  : presentRatio - absentRatio) /
-                (255 * 2)
-              })`,
+              backgroundColor,
             }
           : isHoliday
           ? { backgroundColor: "hsl(var(--nextui-warning-100))" }

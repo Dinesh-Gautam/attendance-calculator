@@ -1,10 +1,8 @@
 import { NextUIProvider } from "@nextui-org/react";
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import { StateProvider, useStateContext } from "./context/stateContext";
 import "./index.css";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -17,13 +15,18 @@ root.render(
   </React.StrictMode>
 );
 
+const App = React.lazy(() => import("./App"));
 function Main() {
   const { theme } = useStateContext();
   return (
     <main className={`${theme.value} bg-background text-foreground`}>
-      <App toggleTheme={theme.toggleTheme} />
+      <Suspense>
+        <App toggleTheme={theme.toggleTheme} />
+      </Suspense>
     </main>
   );
 }
-
-serviceWorkerRegistration.register();
+(async () => {
+  const serviceWorkerRegistration = await import("./serviceWorkerRegistration");
+  serviceWorkerRegistration.register();
+})();

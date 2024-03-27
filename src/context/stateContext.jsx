@@ -18,6 +18,7 @@ export function StateProvider({ children }) {
   const [sortOrder, setSortOrder] = useState(null);
   const [displayChart, setDisplayChart] = useState("Attended Lectures");
   const [stateHistory, setStateHistory] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const theme = useDarkMode(true);
 
   useEffect(() => {
@@ -65,6 +66,8 @@ export function StateProvider({ children }) {
         theme,
         stateHistory,
         setStateHistory,
+        selectedSubject,
+        setSelectedSubject,
       }}
     >
       {children}
