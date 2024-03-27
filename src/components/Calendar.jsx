@@ -3,6 +3,8 @@ import { Card } from "@nextui-org/card";
 import { useStateContext } from "../context/stateContext";
 import { getMonthName } from "../utils";
 import { getWeekNames } from "../utils";
+import { holidays } from "../config";
+import { useMemo } from "react";
 
 export function Calendar() {
   const { info } = useStateContext();
@@ -93,6 +95,11 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
   const absentCount = getPresentAndAbsentCount("absent", days, currentDate);
   const presentRatio = (presentCount * 255) / 6;
   const absentRatio = (absentCount * 255) / 6;
+  const isHoliday = useMemo(
+    () => isHolidayDate(day, monthNo, date.getFullYear()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
   function isCurrentDateSelected() {
     return todayDate.toDateString() === currentDate;
   }
@@ -131,6 +138,8 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
                 (255 * 2)
               })`,
             }
+          : isHoliday
+          ? { backgroundColor: "hsl(var(--nextui-warning-100))" }
           : {}
       }
       onClick={() => setToDayDate(new Date(currentDate))}
@@ -138,6 +147,16 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
       {day}
     </Button>
   );
+}
+
+function isHolidayDate(day, month, year) {
+  const date = new Date(year, month, day);
+  return holidays.some((holiday) => {
+    const [day, month, year] = holiday.date.split("-");
+    return (
+      new Date(year, month - 1, day).toDateString() === date.toDateString()
+    );
+  });
 }
 
 function isCalendarButtonDisabled(day, month, year, startDate, endDate) {
