@@ -115,19 +115,23 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
     return todayDate.toDateString() === currentDate;
   }
 
-  const backgroundColor = `hsl(${
-    absentRatio > 0 && absentRatio > presentRatio
-      ? "var(--nextui-danger)"
-      : "var(--nextui-success)"
-  } / ${
-    selectedSubject
-      ? 1
-      : (absentRatio > 0 && presentRatio < absentRatio
-          ? absentRatio - presentRatio
-          : presentRatio - absentRatio) /
-        (255 * 2)
-  })`;
-
+  const backgroundColor = isHoliday
+    ? `hsl(var(--nextui-warning-100))`
+    : `hsl(${
+        absentRatio > 0 && absentRatio > presentRatio
+          ? "var(--nextui-danger)"
+          : "var(--nextui-success)"
+      } / ${
+        selectedSubject
+          ? 1
+          : (absentRatio > 0 && presentRatio < absentRatio
+              ? absentRatio - presentRatio
+              : presentRatio - absentRatio) /
+            (255 * 2)
+      })`;
+  if (isHoliday) {
+    console.log(isHoliday);
+  }
   return (
     <Button
       isDisabled={isCalendarButtonDisabled(
@@ -157,9 +161,9 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
           ? {
               backgroundColor,
             }
-          : isHoliday
-          ? { backgroundColor: "hsl(var(--nextui-warning-100))" }
-          : {}
+          : // : isHoliday
+            // ? { backgroundColor: "hsl(var(--nextui-warning-100))" }
+            {}
       }
       onClick={() => setToDayDate(new Date(currentDate))}
     >
