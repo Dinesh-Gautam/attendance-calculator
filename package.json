@@ -3,7 +3,11 @@
   "version": "1.0.1",
   "private": true,
   "dependencies": {
-    "@nextui-org/react": "^2.2.9",
+    "@nextui-org/button": "^2.0.33",
+    "@nextui-org/card": "^2.0.30",
+    "@nextui-org/react": "^2.4.1",
+    "@nextui-org/system": "^2.2.1",
+    "@nextui-org/theme": "^2.2.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -29,6 +33,7 @@
     "workbox-streams": "^6.6.0"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "startCss": "npx tailwindcss -o src/index.css -w",
     "start": "react-scripts start",
     "build": "react-scripts build",
