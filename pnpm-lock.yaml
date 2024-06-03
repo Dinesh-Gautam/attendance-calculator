@@ -8,12 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@internationalized/date':
+        specifier: ^3.5.4
+        version: 3.5.4
       '@nextui-org/button':
         specifier: ^2.0.33
         version: 2.0.33(@nextui-org/system@2.2.1)(@nextui-org/theme@2.2.5)(framer-motion@10.18.0)(react-dom@18.3.1)(react@18.3.1)
       '@nextui-org/card':
         specifier: ^2.0.30
         version: 2.0.30(@nextui-org/system@2.2.1)(@nextui-org/theme@2.2.5)(framer-motion@10.18.0)(react-dom@18.3.1)(react@18.3.1)
+      '@nextui-org/date-picker':
+        specifier: ^2.1.1
+        version: 2.1.1(@nextui-org/system@2.2.1)(@nextui-org/theme@2.2.5)(framer-motion@10.18.0)(react-dom@18.3.1)(react@18.3.1)
       '@nextui-org/react':
         specifier: ^2.4.1
         version: 2.4.1(framer-motion@10.18.0)(react-dom@18.3.1)(react@18.3.1)(tailwindcss@3.4.3)
@@ -3512,7 +3518,7 @@ packages:
       react: '>=18'
     dependencies:
       '@nextui-org/shared-utils': 2.0.5
-      '@react-aria/i18n': 3.10.2(react@18.3.1)
+      '@react-aria/i18n': 3.11.1(react@18.3.1)
       react: 18.3.1
     dev: false
 
@@ -3669,7 +3675,7 @@ packages:
       '@react-aria/utils': 3.24.1(react@18.3.1)
       '@react-stately/calendar': 3.4.4(react@18.3.1)
       '@react-types/button': 3.9.4(react@18.3.1)
-      '@react-types/calendar': 3.4.4(react@18.3.1)
+      '@react-types/calendar': 3.4.6(react@18.3.1)
       '@react-types/shared': 3.23.1(react@18.3.1)
       '@swc/helpers': 0.5.11
       react: 18.3.1
@@ -3701,7 +3707,7 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@react-aria/i18n': 3.10.2(react@18.3.1)
+      '@react-aria/i18n': 3.11.1(react@18.3.1)
       '@react-aria/listbox': 3.12.1(react-dom@18.3.1)(react@18.3.1)
       '@react-aria/live-announcer': 3.3.4
       '@react-aria/menu': 3.14.1(react-dom@18.3.1)(react@18.3.1)
@@ -3755,7 +3761,7 @@ packages:
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
       '@react-aria/focus': 3.17.1(react@18.3.1)
-      '@react-aria/overlays': 3.21.1(react-dom@18.3.1)(react@18.3.1)
+      '@react-aria/overlays': 3.22.1(react-dom@18.3.1)(react@18.3.1)
       '@react-aria/utils': 3.24.1(react@18.3.1)
       '@react-types/dialog': 3.5.10(react@18.3.1)
       '@react-types/shared': 3.23.1(react@18.3.1)
@@ -4069,7 +4075,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@react-aria/i18n': 3.10.2(react@18.3.1)
+      '@react-aria/i18n': 3.11.1(react@18.3.1)
       '@react-aria/label': 3.7.8(react@18.3.1)
       '@react-aria/utils': 3.24.1(react@18.3.1)
       '@react-types/progress': 3.5.2(react@18.3.1)
@@ -4349,7 +4355,7 @@ packages:
     dependencies:
       '@internationalized/date': 3.5.4
       '@react-stately/utils': 3.10.1(react@18.3.1)
-      '@react-types/calendar': 3.4.4(react@18.3.1)
+      '@react-types/calendar': 3.4.6(react@18.3.1)
       '@react-types/shared': 3.23.1(react@18.3.1)
       '@swc/helpers': 0.5.11
       react: 18.3.1
@@ -4516,7 +4522,7 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
       '@react-stately/utils': 3.10.1(react@18.3.1)
-      '@react-types/overlays': 3.8.5(react@18.3.1)
+      '@react-types/overlays': 3.8.7(react@18.3.1)
       '@swc/helpers': 0.5.11
       react: 18.3.1
     dev: false
@@ -4617,7 +4623,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@react-stately/utils': 3.9.1(react@18.3.1)
+      '@react-stately/utils': 3.10.1(react@18.3.1)
       '@react-types/checkbox': 3.8.1(react@18.3.1)
       '@swc/helpers': 0.5.11
       react: 18.3.1
@@ -5012,7 +5018,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@react-types/overlays': 3.8.5(react@18.3.1)
+      '@react-types/overlays': 3.8.7(react@18.3.1)
       '@react-types/shared': 3.23.1(react@18.3.1)
       react: 18.3.1
     dev: false
