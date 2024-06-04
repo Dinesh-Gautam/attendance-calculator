@@ -31,14 +31,19 @@ export function GetStartAndEndDate({
         }
       /> */}
       <DateRangePicker
+        className="bg-default-88 text-background"
         label="Stay duration"
         isRequired
-        defaultValue={{
-          start: parseDate(getISODateString(new Date(value.startDate))),
-          end: parseDate(getISODateString(new Date(value.endDate))),
+        value={
+          value.startDate && value.endDate
+            ? {
+                start: parseDate(getISODateString(new Date(value.startDate))),
+                end: parseDate(getISODateString(new Date(value.endDate))),
 
-          // end: parseDate(value.endDate),
-        }}
+                // end: parseDate(value.endDate),
+              }
+            : {}
+        }
         onChange={(e) => {
           const { start, end } = e;
           setValue({

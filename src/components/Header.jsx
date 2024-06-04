@@ -48,7 +48,7 @@ function Header() {
           </div>
         </Button>
 
-        <Dropdown className="bg-foreground text-background" placement="bottom">
+        <Dropdown placement="bottom">
           <DropdownTrigger>
             <Button isIconOnly variant="light">
               <Settings />
@@ -57,20 +57,30 @@ function Header() {
 
           <DropdownMenu>
             <DropdownItem
-              onClick={() => setEdit({type: "info"})}
-              startContent={<CombinedIcon PrimaryIcon={Info} SecondaryIcon={Edit2} />}
+              onClick={() => setEdit({ type: "info" })}
+              startContent={
+                <CombinedIcon PrimaryIcon={Info} SecondaryIcon={Edit2} />
+              }
             >
               Edit Info
             </DropdownItem>
             <DropdownItem
-              onClick={() => setEdit({type : "timetable"})}
-              startContent={<CombinedIcon PrimaryIcon={Table} SecondaryIcon={Edit2} />}
+              onClick={() => setEdit({ type: "timetable" })}
+              startContent={
+                <CombinedIcon PrimaryIcon={Table} SecondaryIcon={Edit2} />
+              }
             >
               Edit Timetable
             </DropdownItem>
             <DropdownItem
               onClick={theme.toggleTheme}
-              startContent={theme.value === "dark" ? <CombinedIcon PrimaryIcon={Sun} /> : <CombinedIcon PrimaryIcon={Moon} />}
+              startContent={
+                theme.value === "dark" ? (
+                  <CombinedIcon PrimaryIcon={Sun} />
+                ) : (
+                  <CombinedIcon PrimaryIcon={Moon} />
+                )
+              }
             >
               {theme.value === "dark" ? "Light" : "Dark"} Mode
             </DropdownItem>
@@ -92,13 +102,14 @@ function Header() {
 function CombinedIcon({ PrimaryIcon, SecondaryIcon }) {
   return (
     <div className="relative text-sm">
-      {SecondaryIcon && <div className="absolute -bottom-2 -right-2  scale-50">
-        <SecondaryIcon strokeWidth="4px"  />
-      </div>}
+      {SecondaryIcon && (
+        <div className="absolute -bottom-2 -right-2  scale-50">
+          <SecondaryIcon strokeWidth="4px" />
+        </div>
+      )}
       <PrimaryIcon size="1.4em" />
     </div>
   );
 }
-
 
 export default Header;
