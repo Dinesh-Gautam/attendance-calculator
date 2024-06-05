@@ -9,15 +9,9 @@ import { useMemo } from "react";
 export default function Calendar() {
   const { info } = useStateContext();
 
-  const noOfMonth = useMemo(
-    () => getMonthsBetween(info.startDate, info.endDate),
-    [info.startDate, info.endDate]
-  );
+  const noOfMonth = getMonthsBetween(info.startDate, info.endDate);
 
-  const offset = useMemo(
-    () => new Date(info.startDate).getMonth(),
-    [info.startDate]
-  );
+  const offset = new Date(info.startDate).getMonth();
 
   return (
     <div className="p-4">
@@ -32,12 +26,9 @@ export default function Calendar() {
 function CalenderMonth({ monthNo }) {
   const { info } = useStateContext();
 
-  const startDate = useMemo(() => new Date(info.startDate), [info.startDate]);
+  const startDate = new Date(info.startDate);
 
-  const noOfDays = useMemo(
-    () => getNumberOfDays(monthNo + 1, startDate.getFullYear()),
-    [monthNo, startDate]
-  );
+  const noOfDays = getNumberOfDays(monthNo + 1, startDate.getFullYear());
 
   return (
     <div className="p-4 text-center">
@@ -92,25 +83,18 @@ function CalenderButton({ startDate, weekNo, weekDayNo, monthNo, date }) {
   const { info, days, todayDate, setToDayDate, originalDate, selectedSubject } =
     useStateContext();
 
-  const year = useMemo(() => startDate.getFullYear(), [startDate]);
+  const year = startDate.getFullYear();
 
-  const day = useMemo(
-    () =>
-      getDate(
-        weekDayNo +
-          1 +
-          7 * (weekNo - 1) -
-          getFirstDayOffset(monthNo, startDate.getFullYear()),
-        monthNo,
-        year
-      ),
-    [monthNo, weekNo, weekDayNo, year, startDate]
+  const day = getDate(
+    weekDayNo +
+      1 +
+      7 * (weekNo - 1) -
+      getFirstDayOffset(monthNo, startDate.getFullYear()),
+    monthNo,
+    year
   );
 
-  const currentDate = useMemo(
-    () => new Date(year, monthNo, day).toDateString(),
-    [year, monthNo, day]
-  );
+  const currentDate = new Date(year, monthNo, day).toDateString();
 
   const presentCount = useMemo(
     () =>
@@ -133,6 +117,7 @@ function CalenderButton({ startDate, weekNo, weekDayNo, monthNo, date }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
   function isCurrentDateSelected() {
     return todayDate.toDateString() === currentDate;
   }
