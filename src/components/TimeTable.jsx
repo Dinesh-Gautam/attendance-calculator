@@ -8,18 +8,23 @@ import {
   getTotalLectures,
 } from "./GetTodaysAttendance";
 import { Option } from "./TableOptions";
+import { motion } from "framer-motion";
 
 export function TimeTable() {
   const { days, info } = useStateContext();
   const subjects = info.timeTable;
 
   return (
-    <Card className="mx-4 p-4 flex justify-center overflow-auto max-w-full">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <div className="flex flex-row gap-2 pb-2">
         <Option optionKey="showPercentage" text="Show percentage" />
         <Option optionKey="showStats" text="Show stats" />
       </div>
-      <table className="timetable" borderspacing="1">
+      <table className="timetable w-full min-w-fit" borderspacing="1">
         <thead>
           <tr>
             <td />
@@ -113,7 +118,7 @@ export function TimeTable() {
           ))}
         </tbody>
       </table>
-    </Card>
+    </motion.div>
   );
 }
 

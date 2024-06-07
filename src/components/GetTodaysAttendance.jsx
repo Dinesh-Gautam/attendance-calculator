@@ -8,12 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { useStateContext } from "../context/stateContext";
-import { Charts } from "./Charts";
 import Header from "./Header";
 import { TableOptions } from "./TableOptions";
 import { TimeTable } from "./TimeTable";
+import { Charts } from "./Charts";
 
 function GetTodayAttendance() {
   const { showTimeTable, info, days, todayDate, setSelectedSubject } =
@@ -103,87 +104,116 @@ function GetTodayAttendance() {
   }
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <Header />
-      {showTimeTable ? (
-        <TimeTable />
-      ) : (
-        <Card className="p-4 mx-4 overflow-auto">
-          <TableOptions />
-          <div className="flex gap-4">
-            <Table
-              className="w-full min-w-fit"
-              selectionMode="single"
-              disabledKeys={["100"]}
-              onSelectionChange={(e) => {
-                const selected = e.has(e.currentKey) ? e.currentKey : null;
-                setSelectedSubject(selected);
-              }}
-              sortDescriptor={{
-                direction: sortOrder === 1 ? "descending" : "ascending",
-                column: Object.keys(tableValues).indexOf(sortCol).toString(),
-              }}
-              onSortChange={(e) => {
-                headingClickHandler(Object.keys(tableValues)[e.column]);
-              }}
-            >
-              <TableHeader>
-                {Object.keys(tableValues).map((heading, index) => {
-                  return (
-                    <TableColumn allowsSorting key={index}>
-                      {heading}
-                    </TableColumn>
-                  );
-                })}
-              </TableHeader>
-              <TableBody emptyContent={"No Subjects to display."}>
-                {getFilteredAndSortedTableValues().map((subject) => {
-                  return (
-                    <TableRow key={subject.id}>
-                      <TableCell style={{ whiteSpace: "nowrap" }}>
-                        {subject.name}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-row gap-2 justify-center">
-                          <AttendanceButtons subject={subject} />
-                        </div>
-                      </TableCell>
+      <motion.div layout>
+        <Card className="p-4 mx-4 overflow-auto overflow-y-hidden">
+          <motion.div layout="preserve-aspect">
+            <AnimatePresence>
+              {showTimeTable ? (
+                <TimeTable />
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <TableOptions />
+                  <div className="flex gap-4">
+                    <Table
+                      className="w-full min-w-fit"
+                      selectionMode="single"
+                      disabledKeys={["100"]}
+                      onSelectionChange={(e) => {
+                        const selected = e.has(e.currentKey)
+                          ? e.currentKey
+                          : null;
+                        setSelectedSubject(selected);
+                      }}
+                      sortDescriptor={{
+                        direction: sortOrder === 1 ? "descending" : "ascending",
+                        column: Object.keys(tableValues)
+                          .indexOf(sortCol)
+                          .toString(),
+                      }}
+                      onSortChange={(e) => {
+                        headingClickHandler(Object.keys(tableValues)[e.column]);
+                      }}
+                    >
+                      <TableHeader>
+                        {Object.keys(tableValues).map((heading, index) => {
+                          return (
+                            <TableColumn allowsSorting key={index}>
+                              {heading}
+                            </TableColumn>
+                          );
+                        })}
+                      </TableHeader>
+                      <TableBody emptyContent={"No Subjects to display."}>
+                        {getFilteredAndSortedTableValues().map((subject) => {
+                          return (
+                            <TableRow key={subject.id}>
+                              <TableCell style={{ whiteSpace: "nowrap" }}>
+                                {subject.name}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-row gap-2 justify-center">
+                                  <AttendanceButtons subject={subject} />
+                                </div>
+                              </TableCell>
 
-                      <TableCell>
-                        {getAttendedLectures(subject, days)}
-                      </TableCell>
-                      <TableCell>{getTotalLectures(subject, days)}</TableCell>
-                      <TableCell>
-                        {getAttendancePercentage(subject, days).toFixed(1)}%
-                      </TableCell>
-                      <TableCell>
-                        {getRequiredLectures(subject, days)}
-                      </TableCell>
-                      <TableCell>{getAllowedHolidays(subject, days)}</TableCell>
-                    </TableRow>
-                  );
-                })}
+                              <TableCell>
+                                {getAttendedLectures(subject, days)}
+                              </TableCell>
+                              <TableCell>
+                                {getTotalLectures(subject, days)}
+                              </TableCell>
+                              <TableCell>
+                                {getAttendancePercentage(subject, days).toFixed(
+                                  1
+                                )}
+                                %
+                              </TableCell>
+                              <TableCell>
+                                {getRequiredLectures(subject, days)}
+                              </TableCell>
+                              <TableCell>
+                                {getAllowedHolidays(subject, days)}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
 
-                {shouldShowTableFooter(info, todayDate) && (
-                  <TableRow key="100">
-                    {Object.values(tableValues).map((heading, index) => {
-                      return index !== 1 ? (
-                        <TableCell key={heading[index].values[0] + index} />
-                      ) : (
-                        <TableCell key={heading[index].values[0] + index}>
-                          <MarkAllAttendanceButtons />
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                        {shouldShowTableFooter(info, todayDate) && (
+                          <TableRow key="100">
+                            {Object.values(tableValues).map(
+                              (heading, index) => {
+                                return index !== 1 ? (
+                                  <TableCell
+                                    key={heading[index].values[0] + index}
+                                  />
+                                ) : (
+                                  <TableCell
+                                    key={heading[index].values[0] + index}
+                                  >
+                                    <MarkAllAttendanceButtons />
+                                  </TableCell>
+                                );
+                              }
+                            )}
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
 
-            <Charts />
-          </div>
+                    <Charts />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </Card>
-      )}
+      </motion.div>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export function GetStartAndEndDate({
       /> */}
       <DateRangePicker
         className="bg-default-88 text-background"
-        label="Stay duration"
+        label="Semester duration"
         isRequired
         value={
           value.startDate && value.endDate
