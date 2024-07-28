@@ -15,13 +15,15 @@ export default function Calendar() {
   const offset = new Date(info.startDate).getMonth();
 
   return (
-    <motion.div layout className="p-4">
+    // <motion.div layout className="p-4">
+    <div className="p-4">
       <Card className="p-2 flex flex-row gap-2 flex-wrap justify-center md:justify-between">
         {[...Array(noOfMonth)].map((_, monthNo) => {
           return <CalenderMonth monthNo={monthNo + offset} key={monthNo} />;
         })}
       </Card>
-    </motion.div>
+    </div>
+    // </motion.div>
   );
 }
 function CalenderMonth({ monthNo }) {

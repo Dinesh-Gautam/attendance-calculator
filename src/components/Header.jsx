@@ -16,6 +16,7 @@ import {
   Trash,
 } from "react-feather";
 import { useStateContext } from "../context/stateContext";
+import { motion } from "framer-motion";
 
 function Header() {
   const {
@@ -28,7 +29,10 @@ function Header() {
   } = useStateContext();
 
   return (
-    <div className="flex flex-row gap-2 flex-wrap p-4 pb-4 items-center md:justify-between">
+    <motion.div
+      layout="position"
+      className="flex flex-row gap-2 flex-wrap p-4 pb-4 items-center md:justify-between"
+    >
       <div className="flex flex-col">
         <span className="text-xs">Today's Date</span>
         <span style={{ fontWeight: "bold" }}>
@@ -96,7 +100,7 @@ function Header() {
           </DropdownMenu>
         </Dropdown>
       </div>
-    </div>
+    </motion.div>
   );
 }
 function CombinedIcon({ PrimaryIcon, SecondaryIcon }) {

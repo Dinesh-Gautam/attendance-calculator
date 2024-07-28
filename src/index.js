@@ -27,7 +27,7 @@ function Main() {
   }, [theme]);
 
   return (
-    <main>
+    <main className="contain-paint max-w-full">
       <Suspense>
         <App toggleTheme={theme.toggleTheme} />
       </Suspense>
