@@ -1,4 +1,4 @@
-import { Card } from "@nextui-org/card";
+import { motion } from "framer-motion";
 import { useStateContext } from "../context/stateContext";
 import { getWeekName } from "../utils";
 import {
@@ -8,7 +8,6 @@ import {
   getTotalLectures,
 } from "./GetTodaysAttendance";
 import { Option } from "./TableOptions";
-import { motion } from "framer-motion";
 
 export function TimeTable() {
   const { days, info } = useStateContext();

@@ -2,7 +2,6 @@ import React, { Suspense } from "react";
 import "./App.css";
 import { useStateContext } from "./context/stateContext";
 import { isAllDataInserted } from "./utils";
-import { motion } from "framer-motion";
 
 const GetTodayAttendance = React.lazy(() =>
   import("./components/GetTodaysAttendance")

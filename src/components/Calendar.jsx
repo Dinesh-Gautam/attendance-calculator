@@ -1,11 +1,9 @@
 import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
-import { useStateContext } from "../context/stateContext";
-import { getMonthName } from "../utils";
-import { getWeekNames } from "../utils";
-import { holidays } from "../config";
 import { useMemo } from "react";
-import { motion } from "framer-motion";
+import { holidays } from "../config";
+import { useStateContext } from "../context/stateContext";
+import { getMonthName, getWeekNames } from "../utils";
 
 export default function Calendar() {
   const { info } = useStateContext();

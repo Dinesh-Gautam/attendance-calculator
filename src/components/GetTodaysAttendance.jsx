@@ -14,7 +14,6 @@ import { useStateContext } from "../context/stateContext";
 import Header from "./Header";
 import { TableOptions } from "./TableOptions";
 import { TimeTable } from "./TimeTable";
-import { Charts } from "./Charts";
 
 function GetTodayAttendance() {
   const { showTimeTable, info, days, todayDate, setSelectedSubject } =
