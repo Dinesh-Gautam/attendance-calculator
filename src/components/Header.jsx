@@ -16,6 +16,7 @@ import {
   Trash,
 } from "react-feather";
 import { useStateContext } from "../context/stateContext";
+import { motion } from "framer-motion";
 
 function Header() {
   const {
@@ -28,7 +29,10 @@ function Header() {
   } = useStateContext();
 
   return (
-    <div className="flex flex-row gap-2 flex-wrap p-4 pb-4 items-center md:justify-between">
+    <motion.div
+      layout="position"
+      className="flex flex-row gap-2 flex-wrap p-4 pb-4 items-center md:justify-between"
+    >
       <div className="flex flex-col">
         <span className="text-xs">Today's Date</span>
         <span style={{ fontWeight: "bold" }}>
@@ -48,7 +52,7 @@ function Header() {
           </div>
         </Button>
 
-        <Dropdown className="bg-foreground text-background" placement="bottom">
+        <Dropdown placement="bottom">
           <DropdownTrigger>
             <Button isIconOnly variant="light">
               <Settings />
@@ -57,20 +61,30 @@ function Header() {
 
           <DropdownMenu>
             <DropdownItem
-              onClick={() => setEdit({type: "info"})}
-              startContent={<CombinedIcon PrimaryIcon={Info} SecondaryIcon={Edit2} />}
+              onClick={() => setEdit({ type: "info" })}
+              startContent={
+                <CombinedIcon PrimaryIcon={Info} SecondaryIcon={Edit2} />
+              }
             >
               Edit Info
             </DropdownItem>
             <DropdownItem
-              onClick={() => setEdit({type : "timetable"})}
-              startContent={<CombinedIcon PrimaryIcon={Table} SecondaryIcon={Edit2} />}
+              onClick={() => setEdit({ type: "timetable" })}
+              startContent={
+                <CombinedIcon PrimaryIcon={Table} SecondaryIcon={Edit2} />
+              }
             >
               Edit Timetable
             </DropdownItem>
             <DropdownItem
               onClick={theme.toggleTheme}
-              startContent={theme.value === "dark" ? <CombinedIcon PrimaryIcon={Sun} /> : <CombinedIcon PrimaryIcon={Moon} />}
+              startContent={
+                theme.value === "dark" ? (
+                  <CombinedIcon PrimaryIcon={Sun} />
+                ) : (
+                  <CombinedIcon PrimaryIcon={Moon} />
+                )
+              }
             >
               {theme.value === "dark" ? "Light" : "Dark"} Mode
             </DropdownItem>
@@ -86,19 +100,20 @@ function Header() {
           </DropdownMenu>
         </Dropdown>
       </div>
-    </div>
+    </motion.div>
   );
 }
 function CombinedIcon({ PrimaryIcon, SecondaryIcon }) {
   return (
     <div className="relative text-sm">
-      {SecondaryIcon && <div className="absolute -bottom-2 -right-2  scale-50">
-        <SecondaryIcon strokeWidth="4px"  />
-      </div>}
+      {SecondaryIcon && (
+        <div className="absolute -bottom-2 -right-2  scale-50">
+          <SecondaryIcon strokeWidth="4px" />
+        </div>
+      )}
       <PrimaryIcon size="1.4em" />
     </div>
   );
 }
-
 
 export default Header;

@@ -8,6 +8,7 @@ export function GetClassInfo({
   return (
     <Form>
       <FormInput
+        isRequired
         placeholder="1CE12"
         id="classNameInput"
         onChange={(e) => setValue(e.target.value)}

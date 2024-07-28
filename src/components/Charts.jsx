@@ -49,9 +49,6 @@ export function Charts() {
   return (
     <Card className="p-4 w-max flex flex-col gap-4 flex-nowrap min-w-fit shadow-small">
       <Select
-        classNames={{
-          popoverContent: "bg-default-800 text-background",
-        }}
         size="sm"
         className="w-full mw-max"
         label="Select chart type"

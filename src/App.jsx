@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import "./App.css";
 import { useStateContext } from "./context/stateContext";
 import { isAllDataInserted } from "./utils";
+import { motion } from "framer-motion";
 
 const GetTodayAttendance = React.lazy(() =>
   import("./components/GetTodaysAttendance")
@@ -24,12 +25,14 @@ function App() {
         )}
 
         {!edit && isAllDataInserted(info) && (
-          <>
-            <Suspense>
+          <Suspense>
+            {/* <motion.div layout className="flex flex-col"> */}
+            <div className="flex flex-col min-h-screen">
               <GetTodayAttendance />
               <Calendar />
-            </Suspense>
-          </>
+            </div>
+            {/* </motion.div> */}
+          </Suspense>
         )}
       </>
     )

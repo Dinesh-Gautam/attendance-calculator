@@ -5,24 +5,31 @@ import { getMonthName } from "../utils";
 import { getWeekNames } from "../utils";
 import { holidays } from "../config";
 import { useMemo } from "react";
+import { motion } from "framer-motion";
 
 export default function Calendar() {
   const { info } = useStateContext();
+
   const noOfMonth = getMonthsBetween(info.startDate, info.endDate);
+
+  const offset = new Date(info.startDate).getMonth();
+
   return (
+    // <motion.div layout className="p-4">
     <div className="p-4">
       <Card className="p-2 flex flex-row gap-2 flex-wrap justify-center md:justify-between">
         {[...Array(noOfMonth)].map((_, monthNo) => {
-          return <CalenderMonth monthNo={monthNo} key={monthNo} />;
+          return <CalenderMonth monthNo={monthNo + offset} key={monthNo} />;
         })}
       </Card>
     </div>
+    // </motion.div>
   );
 }
 function CalenderMonth({ monthNo }) {
   const { info } = useStateContext();
+
   const startDate = new Date(info.startDate);
-  startDate.setMonth(monthNo + 1);
 
   const noOfDays = getNumberOfDays(monthNo + 1, startDate.getFullYear());
 
@@ -42,7 +49,7 @@ function CalenderMonth({ monthNo }) {
           </tr>
         </thead>
         <tbody>
-          {[...Array(Math.ceil(noOfDays / 7))].map((_, weekNo) => (
+          {[...Array(Math.round(noOfDays / 5))].map((_, weekNo) => (
             <tr key={monthNo + weekNo}>
               <CalenderWeek {...{ startDate, weekNo, monthNo }} />
             </tr>
@@ -55,27 +62,13 @@ function CalenderMonth({ monthNo }) {
 
 function CalenderWeek({ startDate, weekNo, monthNo }) {
   return [...Array(7)].map((_, weekDayNo) => {
-    const year = startDate.getFullYear();
-    const day = getDate(
-      weekDayNo +
-        1 +
-        7 * weekNo -
-        getFirstDayOffset(monthNo, startDate.getFullYear()),
-      monthNo,
-      year
-    );
-    const currentDate = new Date(year, monthNo, day).toDateString();
-
     return (
       <td key={monthNo + weekNo + weekDayNo}>
-        {day && (
-          <CalenderButton
-            day={day}
-            monthNo={monthNo}
-            date={startDate}
-            currentDate={currentDate}
-          />
-        )}
+        <CalenderButton
+          {...{ startDate, weekNo, weekDayNo }}
+          monthNo={monthNo}
+          date={startDate}
+        />
       </td>
     );
   });
@@ -89,28 +82,45 @@ function getPresentAndAbsentCount(type, days, currentDate, selected) {
   );
 }
 
-function CalenderButton({ day, monthNo, date, currentDate }) {
+function CalenderButton({ startDate, weekNo, weekDayNo, monthNo, date }) {
   const { info, days, todayDate, setToDayDate, originalDate, selectedSubject } =
     useStateContext();
-  const presentCount = getPresentAndAbsentCount(
-    "present",
-    days,
-    currentDate,
-    selectedSubject
+
+  const year = startDate.getFullYear();
+
+  const day = getDate(
+    weekDayNo +
+      1 +
+      7 * (weekNo - 1) -
+      getFirstDayOffset(monthNo, startDate.getFullYear()),
+    monthNo,
+    year
   );
-  const absentCount = getPresentAndAbsentCount(
-    "absent",
-    days,
-    currentDate,
-    selectedSubject
+
+  const currentDate = new Date(year, monthNo, day).toDateString();
+
+  const presentCount = useMemo(
+    () =>
+      getPresentAndAbsentCount("present", days, currentDate, selectedSubject),
+    [days, currentDate, selectedSubject]
   );
+
+  const absentCount = useMemo(
+    () =>
+      getPresentAndAbsentCount("absent", days, currentDate, selectedSubject),
+    [days, currentDate, selectedSubject]
+  );
+
   const presentRatio = (presentCount * 255) / 6;
   const absentRatio = (absentCount * 255) / 6;
+
   const isHoliday = useMemo(
     () => isHolidayDate(day, monthNo, date.getFullYear()),
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
   function isCurrentDateSelected() {
     return todayDate.toDateString() === currentDate;
   }
@@ -129,46 +139,45 @@ function CalenderButton({ day, monthNo, date, currentDate }) {
               : presentRatio - absentRatio) /
             (255 * 2)
       })`;
-  if (isHoliday) {
-    console.log(isHoliday);
-  }
+
   return (
-    <Button
-      isDisabled={isCalendarButtonDisabled(
-        day,
-        monthNo,
-        date.getFullYear(),
-        info.startDate,
-        info.endDate
-      )}
-      size="sm"
-      isIconOnly
-      variant={
-        isCurrentDateSelected()
-          ? "shadow"
-          : originalDate.toDateString() === currentDate
-          ? "solid"
-          : "light"
-      }
-      color={isCurrentDateSelected() ? "primary" : "default"}
-      style={
-        (!selectedSubject ||
-          ((days[currentDate]?.[selectedSubject]?.present ||
-            days[currentDate]?.[selectedSubject]?.absent) &&
-            presentRatio + absentRatio > 0)) &&
-        originalDate.toDateString() !== currentDate &&
-        !isCurrentDateSelected()
-          ? {
-              backgroundColor,
-            }
-          : // : isHoliday
-            // ? { backgroundColor: "hsl(var(--nextui-warning-100))" }
-            {}
-      }
-      onClick={() => setToDayDate(new Date(currentDate))}
-    >
-      {day}
-    </Button>
+    day && (
+      <Button
+        disableRipple
+        isDisabled={isCalendarButtonDisabled(
+          day,
+          monthNo,
+          date.getFullYear(),
+          info.startDate,
+          info.endDate
+        )}
+        size="sm"
+        isIconOnly
+        variant={
+          isCurrentDateSelected()
+            ? "shadow"
+            : originalDate.toDateString() === currentDate
+            ? "solid"
+            : "light"
+        }
+        color={isCurrentDateSelected() ? "primary" : "default"}
+        style={
+          (!selectedSubject ||
+            ((days[currentDate]?.[selectedSubject]?.present ||
+              days[currentDate]?.[selectedSubject]?.absent) &&
+              presentRatio + absentRatio > 0)) &&
+          originalDate.toDateString() !== currentDate &&
+          !isCurrentDateSelected()
+            ? {
+                backgroundColor,
+              }
+            : {}
+        }
+        onClick={() => setToDayDate(new Date(currentDate))}
+      >
+        {day}
+      </Button>
+    )
   );
 }
 
@@ -183,13 +192,10 @@ function isHolidayDate(day, month, year) {
 }
 
 function isCalendarButtonDisabled(day, month, year, startDate, endDate) {
-  const date = new Date(year, month, day + 1);
-
-  return (
-    date < new Date(startDate) ||
-    date > new Date(endDate).setDate(new Date(endDate).getDate() + 1)
-  );
+  const date = new Date(year, month, day);
+  return date < new Date(startDate) || date > new Date(endDate);
 }
+
 function getFirstDayOffset(month, year) {
   const date = new Date(year, month, 1);
   return date.getDay() - 1;
