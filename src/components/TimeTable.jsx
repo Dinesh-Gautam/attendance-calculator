@@ -126,11 +126,11 @@ function getSubjectPresentRatio(subjectId, days) {
   const daysData = Object.values(days).flatMap((day) => Object.entries(day));
 
   const totalPresent = daysData.filter(
-    ([id, att]) => att?.present && +id === subjectId
+    ([id, att]) => att?.present && id === subjectId
   ).length;
 
   const totalAbsent = daysData.filter(
-    ([id, att]) => att?.absent && +id === subjectId
+    ([id, att]) => att?.absent && id === subjectId
   ).length;
 
   return (totalPresent / (totalPresent + totalAbsent)) * 100;
