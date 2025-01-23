@@ -76,73 +76,46 @@ export const subjects = [
 ];
 
 export const holidays = [
+  { "date": "06-01-2025", "day": "Monday", "name": "Birthday of Guru Gobind Singh ji" },
+  { "date": "26-01-2025", "day": "Sunday", "name": "Republic Day" },
+  { "date": "12-02-2025", "day": "Wednesday", "name": "Birthday of Sri Guru Ravidas ji" },
+  { "date": "26-02-2025", "day": "Wednesday", "name": "Maha Shivaratri" },
+  { "date": "14-03-2025", "day": "Friday", "name": "Holi" },
   {
-    date: "17-01-2024",
-    day: "Wednesday",
-    name: "Lichday of Guru Gobind Singh ji",
+    "date": "23-03-2025",
+    "day": "Sunday",
+    "name": "Shaheedi Diwas of Shaheed-e-Azam Bhagat Singh, Sukhdev, and Rajguru Ji"
   },
-  { date: "26-01-2024", day: "Friday", name: "Republic Day" },
+  { "date": "31-03-2025", "day": "Monday", "name": "Idul Fitr" },
+  { "date": "06-04-2025", "day": "Sunday", "name": "Ram Navami" },
+  { "date": "08-04-2025", "day": "Tuesday", "name": "Birthday of Sri Guru Nabha Dass ji" },
+  { "date": "10-04-2025", "day": "Thursday", "name": "Mahavir Jayanti" },
+  { "date": "13-04-2025", "day": "Sunday", "name": "Vaisakhi" },
+  { "date": "14-04-2025", "day": "Monday", "name": "Birthday of Dr. B.R. Ambedkar" },
+  { "date": "18-04-2025", "day": "Friday", "name": "Good Friday" },
+  { "date": "29-04-2025", "day": "Tuesday", "name": "Birthday of Lord Parshuram Ji" },
+  { "date": "01-05-2025", "day": "Thursday", "name": "May Day" },
+  { "date": "30-05-2025", "day": "Friday", "name": "Martyrdom Day of Sri Guru Arjun Dev Ji" },
+  { "date": "07-06-2025", "day": "Saturday", "name": "Id-ul-Zuha (Bakrid)" },
+  { "date": "11-06-2025", "day": "Wednesday", "name": "Kabir Jayanti" },
+  { "date": "15-08-2025", "day": "Friday", "name": "Independence Day" },
+  { "date": "16-08-2025", "day": "Saturday", "name": "Janam Ashtami" },
+  { "date": "22-09-2025", "day": "Monday", "name": "Maharaj Agarsain Jayanti" },
+  { "date": "02-10-2025", "day": "Thursday", "name": "Birthday of Mahatma Gandhi Ji" },
+  { "date": "02-10-2025", "day": "Thursday", "name": "Dussehra" },
+  { "date": "07-10-2025", "day": "Tuesday", "name": "Birthday of Maharishi Valmiki Ji" },
+  { "date": "20-10-2025", "day": "Monday", "name": "Diwali" },
+  { "date": "22-10-2025", "day": "Wednesday", "name": "Vishwakarma Day" },
+  { "date": "05-11-2025", "day": "Wednesday", "name": "Birthday of Sri Guru Nanak Dev Ji" },
   {
-    date: "24-02-2024",
-    day: "Saturday",
-    name: "Birthday of Sri Guru Ravidas ji",
+    "date": "16-11-2025",
+    "day": "Sunday",
+    "name": "Martyrdom Day of S. Kartar Singh Sarabha ji"
   },
-  { date: "08-03-2024", day: "Friday", name: "Maha Shivaratri" },
-  {
-    date: "23-03-2024",
-    day: "Saturday",
-    name: "Shaheedi Diwas of Shaheed-e-Azam Bhagat Singh, Sukhdev and Rajguru",
-  },
-  { date: "25-03-2024", day: "Monday", name: "Holi" },
-  { date: "29-03-2024", day: "Friday", name: "Good Friday" },
-  {
-    date: "08-04-2024",
-    day: "Monday",
-    name: "Birthday of Sri Guru Nanak Dev Ji",
-  },
-  { date: "11-04-2024", day: "Thursday", name: "Idul Fitr" },
-  { date: "13-04-2024", day: "Saturday", name: "Vaisakhi" },
-  {
-    date: "14-04-2024",
-    day: "Sunday",
-    name: "Birthday of Dr. B.R. Ambedkar",
-  },
-  { date: "17-04-2024", day: "Wednesday", name: "Ram Navami" },
-  { date: "21-04-2024", day: "Sunday", name: "Mahavir Jayanti" },
-  { date: "01-05-2024", day: "Wednesday", name: "May Day" },
-  { date: "10-05-2024", day: "Friday", name: "Lord Parshuram Jayanti" },
-  {
-    date: "10-06-2024",
-    day: "Monday",
-    name: "Martyrdom Day of Sri Guru Arjun Dev Ji",
-  },
-  { date: "17-06-2024", day: "Monday", name: "Id-ul-Zuha (Bakrid)" },
-  { date: "22-06-2024", day: "Saturday", name: "Kabir Jayanti" },
-  { date: "15-08-2024", day: "Thursday", name: "Independence Day" },
-  { date: "26-08-2024", day: "Monday", name: "Janam Ashtami" },
-  {
-    date: "02-10-2024",
-    day: "Wednesday",
-    name: "Birthday of Mahatma Gandhi Ji",
-  },
-  {
-    date: "03-10-2024",
-    day: "Thursday",
-    name: "Maharaj Agarsain Jayanti",
-  },
-  { date: "12-10-2024", day: "Saturday", name: "Dussehra" },
-  {
-    date: "17-10-2024",
-    day: "Thursday",
-    name: "Birthday of Maharishi Valmiki Ji",
-  },
-  { date: "31-10-2024", day: "Thursday", name: "Diwali" },
-  { date: "01-11-2024", day: "Friday", name: "Vishwakarma Day" },
-  {
-    date: "15-11-2024",
-    day: "Friday",
-    name: "Martyrdom Day of S. Kartar Singh Sarabha ji",
-  },
-];
+  { "date": "25-11-2025", "day": "Tuesday", "name": "Martyrdom Day of Sri Guru Teg Bahadur ji" },
+  { "date": "25-12-2025", "day": "Thursday", "name": "Christmas Day" },
+  { "date": "27-12-2025", "day": "Saturday", "name": "Shaheedi Sabha, Shri Fatehgarh Sahib" }
+]
+
 
 export const noOfDays = 5;
