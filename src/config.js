@@ -1,79 +1,191 @@
 export const subjects = [
-  {
-    name: "JP",
-    id: "32717e1f-b735-42cb-bec0-f56d7797af07",
-    lectures: {
-      1: [{ startTime: 14, endTime: 15 }],
-      2: [{ startTime: 14, endTime: 15 }],
-      3: [{ startTime: 13, endTime: 14 }],
-    },
-  },
-  {
-    name: "RDBMS",
-    id: "38569b2a-7658-4479-bb13-e8015e735e67",
-    lectures: {
-      2: [{ startTime: 10, endTime: 11 }],
-      4: [{ startTime: 12, endTime: 13 }],
-      5: [{ startTime: 10, endTime: 11 }],
-    },
-  },
-  {
-    name: "NSCF",
-    id: "145034ab-7471-4491-ae1f-9decc56b63e7",
-    lectures: {
-      2: [{ startTime: 9, endTime: 10 }],
-      3: [{ startTime: 11, endTime: 12 }],
-      4: [{ startTime: 14, endTime: 15 }],
-    },
-  },
-  {
-    name: "ToC",
-    id: "e1481685-7e54-4168-8c88-b0f10cab50f2",
-    lectures: {
-      3: [{ startTime: 9, endTime: 10 }],
-      4: [{ startTime: 11, endTime: 12 }],
-      5: [{ startTime: 14, endTime: 15 }],
-    },
-  },
-  {
-    name: "AI",
-    id: "ab5f3bf1-7124-4dd4-9526-7f2a4b79ca20",
-    lectures: {
-      1: [{ startTime: 15, endTime: 16 }],
-      3: [{ startTime: 10, endTime: 11 }],
-      5: [{ startTime: 9, endTime: 10 }],
-    },
-  },
-  {
-    name: "JP Lab",
-    id: "a04ad233-d459-4bc7-9581-5688e3d0af1b",
-    lectures: {
-      4: [{ startTime: 9, endTime: 11 }],
-      5: [{ startTime: 15, endTime: 17 }],
-    },
-  },
-  {
-    name: "RDBMS Lab",
-    id: "72b4737c-5cc7-4e89-95e2-5322cd0d229d",
-    lectures: {
-      1: [{ startTime: 9, endTime: 11 }],
-      5: [{ startTime: 11, endTime: 13 }],
-    },
-  },
-  {
-    name: "NSCF Lab",
-    id: "1a0fd976-f9af-4825-8583-0544bb65a439",
-    lectures: {
-      1: [{ startTime: 11, endTime: 13 }],
-      2: [{ startTime: 11, endTime: 13 }],
-    },
-  },
-  {
-    name: "MP",
-    id: "2f0fdf5a-6f15-41cc-97c5-127ee7dceb5f",
-    lectures: { 3: [{ startTime: 15, endTime: 17 }] },
-  },
-];
+        {
+            "name": "CC",
+            "id": "cc-id",
+            "lectures": {
+                "1": [
+                    {
+                        "startTime": 9,
+                        "endTime": 10
+                    }
+                ],
+                "2": [
+                    {
+                        "startTime": 14,
+                        "endTime": 15
+                    }
+                ],
+                "5": [
+                    {
+                        "startTime": 11,
+                        "endTime": 12
+                    }
+                ]
+            }
+        },
+        {
+            "name": "ML",
+            "id": "ml-id",
+            "lectures": {
+                "1": [
+                    {
+                        "startTime": 10,
+                        "endTime": 11
+                    }
+                ],
+                "3": [
+                    {
+                        "startTime": 12,
+                        "endTime": 13
+                    }
+                ],
+                "4": [
+                    {
+                        "startTime": 13,
+                        "endTime": 14
+                    }
+                ]
+            }
+        },
+        {
+            "name": "MAD_Lab",
+            "id": "mad-lab-id",
+            "lectures": {
+                "3": [
+                    {
+                        "startTime": 9,
+                        "endTime": 11
+                    }
+                ],
+                "5": [
+                    {
+                        "startTime": 13,
+                        "endTime": 15
+                    }
+                ]
+            }
+        },
+        {
+            "name": "ML_Lab",
+            "id": "ml-lab-id",
+            "lectures": {
+                "1": [
+                    {
+                        "startTime": 11,
+                        "endTime": 13
+                    }
+                ],
+                "2": [
+                    {
+                        "startTime": 9,
+                        "endTime": 11
+                    }
+                ]
+            }
+        },
+        {
+            "name": "MAD",
+            "id": "mad-id",
+            "lectures": {
+                "1": [
+                    {
+                        "startTime": 14,
+                        "endTime": 15
+                    }
+                ],
+                "2": [
+                    {
+                        "startTime": 11,
+                        "endTime": 12
+                    }
+                ],
+                "4": [
+                    {
+                        "startTime": 11,
+                        "endTime": 12
+                    }
+                ]
+            }
+        },
+        {
+            "name": "CG",
+            "id": "cg-id",
+            "lectures": {
+                "1": [
+                    {
+                        "startTime": 15,
+                        "endTime": 16
+                    }
+                ],
+                "3": [
+                    {
+                        "startTime": 14,
+                        "endTime": 15
+                    }
+                ],
+                "4": [
+                    {
+                        "startTime": 14,
+                        "endTime": 15
+                    }
+                ]
+            }
+        },
+        {
+            "name": "CD",
+            "id": "cd-id",
+            "lectures": {
+                "2": [
+                    {
+                        "startTime": 13,
+                        "endTime": 14
+                    }
+                ],
+                "3": [
+                    {
+                        "startTime": 11,
+                        "endTime": 12
+                    }
+                ],
+                "4": [
+                    {
+                        "startTime": 11,
+                        "endTime": 12
+                    }
+                ],
+                "5": [
+                    {
+                        "startTime": 10,
+                        "endTime": 11
+                    }
+                ]
+            }
+        },
+        {
+            "name": "CG_Lab",
+            "id": "cg-lab-id",
+            "lectures": {
+                "4": [
+                    {
+                        "startTime": 9,
+                        "endTime": 11
+                    }
+                ]
+            }
+        },
+        {
+            "name": "MnP_BTech",
+            "id": "mnp-btech-id",
+            "lectures": {
+                "5": [
+                    {
+                        "startTime": 15,
+                        "endTime": 17
+                    }
+                ]
+            }
+        }
+    ]
 
 export const holidays = [
   { "date": "06-01-2025", "day": "Monday", "name": "Birthday of Guru Gobind Singh ji" },
