@@ -1,191 +1,48 @@
-export const subjects = [
-        {
-            "name": "CC",
-            "id": "cc-id",
-            "lectures": {
-                "1": [
-                    {
-                        "startTime": 9,
-                        "endTime": 10
-                    }
-                ],
-                "2": [
-                    {
-                        "startTime": 14,
-                        "endTime": 15
-                    }
-                ],
-                "5": [
-                    {
-                        "startTime": 11,
-                        "endTime": 12
-                    }
-                ]
-            }
-        },
-        {
-            "name": "ML",
-            "id": "ml-id",
-            "lectures": {
-                "1": [
-                    {
-                        "startTime": 10,
-                        "endTime": 11
-                    }
-                ],
-                "3": [
-                    {
-                        "startTime": 12,
-                        "endTime": 13
-                    }
-                ],
-                "4": [
-                    {
-                        "startTime": 13,
-                        "endTime": 14
-                    }
-                ]
-            }
-        },
-        {
-            "name": "MAD_Lab",
-            "id": "mad-lab-id",
-            "lectures": {
-                "3": [
-                    {
-                        "startTime": 9,
-                        "endTime": 11
-                    }
-                ],
-                "5": [
-                    {
-                        "startTime": 13,
-                        "endTime": 15
-                    }
-                ]
-            }
-        },
-        {
-            "name": "ML_Lab",
-            "id": "ml-lab-id",
-            "lectures": {
-                "1": [
-                    {
-                        "startTime": 11,
-                        "endTime": 13
-                    }
-                ],
-                "2": [
-                    {
-                        "startTime": 9,
-                        "endTime": 11
-                    }
-                ]
-            }
-        },
-        {
-            "name": "MAD",
-            "id": "mad-id",
-            "lectures": {
-                "1": [
-                    {
-                        "startTime": 14,
-                        "endTime": 15
-                    }
-                ],
-                "2": [
-                    {
-                        "startTime": 11,
-                        "endTime": 12
-                    }
-                ],
-                "4": [
-                    {
-                        "startTime": 11,
-                        "endTime": 12
-                    }
-                ]
-            }
-        },
-        {
-            "name": "CG",
-            "id": "cg-id",
-            "lectures": {
-                "1": [
-                    {
-                        "startTime": 15,
-                        "endTime": 16
-                    }
-                ],
-                "3": [
-                    {
-                        "startTime": 14,
-                        "endTime": 15
-                    }
-                ],
-                "4": [
-                    {
-                        "startTime": 14,
-                        "endTime": 15
-                    }
-                ]
-            }
-        },
-        {
-            "name": "CD",
-            "id": "cd-id",
-            "lectures": {
-                "2": [
-                    {
-                        "startTime": 13,
-                        "endTime": 14
-                    }
-                ],
-                "3": [
-                    {
-                        "startTime": 11,
-                        "endTime": 12
-                    }
-                ],
-                "4": [
-                    {
-                        "startTime": 11,
-                        "endTime": 12
-                    }
-                ],
-                "5": [
-                    {
-                        "startTime": 10,
-                        "endTime": 11
-                    }
-                ]
-            }
-        },
-        {
-            "name": "CG_Lab",
-            "id": "cg-lab-id",
-            "lectures": {
-                "4": [
-                    {
-                        "startTime": 9,
-                        "endTime": 11
-                    }
-                ]
-            }
-        },
-        {
-            "name": "MnP_BTech",
-            "id": "mnp-btech-id",
-            "lectures": {
-                "5": [
-                    {
-                        "startTime": 15,
-                        "endTime": 17
-                    }
-                ]
-            }
-        }
-    ]
+export const subjects =  [
+    {
+      "name": "AWD",
+      "id": "awd-id",
+      "lectures": {
+        "2": [{ "startTime": 11, "endTime": 12 }],
+        "4": [{ "startTime": 11, "endTime": 12 }],
+        "5": [{ "startTime": 10, "endTime": 11 }]
+      }
+    },
+    {
+      "name": "DIP",
+      "id": "dip-id",
+      "lectures": {
+        "1": [{ "startTime": 11, "endTime": 12 }],
+        "4": [{ "startTime": 12, "endTime": 13 }],
+        "5": [{ "startTime": 9, "endTime": 10 }]
+      }
+    },
+    {
+      "name": "DMW_L",
+      "id": "dmw-lab-id",
+      "lectures": {
+        "1": [{ "startTime": 9, "endTime": 11 }],
+        "5": [{ "startTime": 13, "endTime": 15 }]
+      }
+    },
+    {
+      "name": "DMW",
+      "id": "dmw-id",
+      "lectures": {
+        "2": [{ "startTime": 10, "endTime": 11 }],
+        "3": [{ "startTime": 11, "endTime": 12 }],
+        "5": [{ "startTime": 11, "endTime": 12 }]
+      }
+    },
+    {
+      "name": "AWD_L",
+      "id": "awd-lab-id",
+      "lectures": {
+        "1": [{ "startTime": 13, "endTime": 15 }],
+        "3": [{ "startTime": 13, "endTime": 15 }]
+      }
+    }
+  ];
 
 export const holidays = [
   { "date": "06-01-2025", "day": "Monday", "name": "Birthday of Guru Gobind Singh ji" },
