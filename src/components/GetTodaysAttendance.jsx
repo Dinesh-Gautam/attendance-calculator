@@ -187,16 +187,18 @@ function GetTodayAttendance() {
                           </TableRow>
                         );
                       })}
-
+                      {console.log(Object.values(tableValues))}
                       {shouldShowTableFooter(info, todayDate) && (
                         <TableRow key="100">
                           {Object.values(tableValues).map((heading, index) => {
                             return index !== 1 ? (
                               <TableCell
-                                key={heading[index].values[0] + index}
+                                key={heading.values[0] + String(index)}
                               />
                             ) : (
-                              <TableCell key={heading[index].values[0] + index}>
+                              <TableCell
+                                key={heading.values[0] + String(index)}
+                              >
                                 <MarkAllAttendanceButtons />
                               </TableCell>
                             );
